@@ -1,0 +1,14 @@
+__pycache__
+*.pyc
+.venv/
+venv/
+.env
+build/
+dist/
+raw_locale_files/
+app.spec
+config.json
+nces_data.csv
+temp.py
+.vscode/
+.idea/
