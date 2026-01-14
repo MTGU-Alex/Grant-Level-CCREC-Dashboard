@@ -10,6 +10,8 @@ NCES LOCALES: https://data-nces.opendata.arcgis.com/search?groupIds=455147561fd3
 - Can't find 2020-21
 '''
 
+print('starting dashboard')
+
 # Reading in data with data_loader.py and mapping codes
 data_frames = data_loader.load_data()
 if type(data_frames) == str:
