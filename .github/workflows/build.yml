@@ -27,11 +27,11 @@ jobs:
 
       - name: Build windows executable
         if: runner.os == 'Windows'
-        run: pyinstaller --add-data "assets/styles.css;assets" --onefile main.py
+        run: pyinstaller --add-data "assets/styles.css;assets" --add-data "locale_data.pkl;." --onefile main.py
 
       - name: Build Mac executable
         if: runner.os == 'macOS'
-        run: pyinstaller --add-data "assets/styles.css:assets" --onefile main.py
+        run: pyinstaller --add-data "assets/styles.css:assets" --add-data "locale_data.pkl:." --onefile main.py
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v6
