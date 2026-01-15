@@ -41,5 +41,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.version }}
-          name: ${{ runner.os }}--build
+          name: Downloadable Dashboard Files
           files: dist/*
