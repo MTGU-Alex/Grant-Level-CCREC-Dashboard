@@ -2,6 +2,10 @@ name: Build Executables
 
 on:
     workflow_dispatch:
+      inputs:
+        version: 
+          description: "Release Version"
+          required: true
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -36,5 +40,6 @@ jobs:
       - name: realease to GitHub
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ inputs.version }}
           name: ${{ runner.os }}--build
           files: dist/*
