@@ -35,7 +35,9 @@ jobs:
 
       - name: Build Mac executable
         if: runner.os == 'macOS'
-        run: pyinstaller --add-data "assets/styles.css:assets" --add-data "locale_data.pkl:." --onefile main.py --name CCREC_dashboard_mac
+        run: |
+          pyinstaller --add-data "assets/styles.css:assets" --add-data "locale_data.pkl:." --onefile main.py --name CCREC_dashboard_mac
+          chmod +x dist/CCREC_dashboard_mac
 
       - name: realease to GitHub
         uses: softprops/action-gh-release@v2
