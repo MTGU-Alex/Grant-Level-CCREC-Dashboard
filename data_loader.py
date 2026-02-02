@@ -191,7 +191,7 @@ def load_data():
     if selected_dir == '':
         return 'ERROR: No source file folder selected.'
     
-    print(f'- Starting to read data from: {selected_dir}')
+    print(f'- Reading data from: {selected_dir}')
     
     files = []
     subdirs = []
