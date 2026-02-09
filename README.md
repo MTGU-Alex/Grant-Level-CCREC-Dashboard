@@ -1,6 +1,7 @@
 # Open Source CCREC Dashboard
-## This repository contains all needed files and documentation to run a free and open source dashboard that uses CCREC NSC files as source data.
-In this repository, you can find:
-- A [user guide](https://github.com/MTGU-Alex/ccrec_dashboard_private/tree/master/User%20Guide) including details about the source data
-- A usable dashboard in the form of an executable file
-- [Technical documentation](https://github.com/MTGU-Alex/ccrec_dashboard_private/tree/master/Technical%20Documentation)
+This GitHub page contains the source code and executable files for the open source CCREC dashboard. In this google drive [https://tinyurl.com/CCREC-Dashboard-Resources](https://tinyurl.com/CCREC-Dashboard-Resources) you can find:
+- [Practice data](https://drive.google.com/drive/folders/1kDkPHDgVc5-5ae2jMbMxi9h8hg0D6kDH)
+- [Instructions for preparing the practice data](https://docs.google.com/document/d/1CdY0T9_Uyb5UrzX8lq5_b1m3BWsnae2HgKWkzefGk54/edit?tab=t.0)
+- [A guide for getting your own grants data from the NSC CCREC repository](https://docs.google.com/document/d/1ftvVwZll1L76zUgbavAy1etlFGsppfeF2BFPRVBV1Gc/edit?tab=t.0)
+- [Details about the data format required to run the dashboard](https://docs.google.com/document/d/1IYRWjJLDqWcNBYF_E-L4CM6ajpnhO9ptRfIqvZ4moNg/edit?tab=t.0)
+- [A guide for downloading and running the dashboard](https://docs.google.com/document/d/19oLdHepfL_Q0NQ0WMxLxuiIDEvor5IzDCITBgNaGi2s/edit?tab=t.0)
