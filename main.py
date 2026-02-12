@@ -1,12 +1,13 @@
+print('- Starting dashboard')
+print('- Look for a folder selection window with a title of \"Please select a source file folder\"')
+print('- Please be patient, it may take a minute or two ')
+
 import sys
 from dash import Dash, html, dcc
 
 import data_loader
 import components
 from callbacks import register_callbacks
-
-print('- Starting dashboard')
-print('- Look for a folder selection window with a title of \"Please select a source file folder\"')
 
 # Reading in data with data_loader.py and mapping codes
 data_frames = data_loader.load_data()
