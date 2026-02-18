@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import filedialog
 import pandas as pd
 from tabulate import tabulate
@@ -184,10 +185,21 @@ def process_subdirs(subdir_list):
 # returns AY, student, service dfs of all years combined
 def load_data():
 
+    # setting up tk root for folder selection
+    root = tk.Tk()
+    root.withdraw()
+    root.attributes('-topmost', True)
+    root.update()
+
     # opens directory selection window
-    selected_dir = filedialog.askdirectory(
-        title = 'Please select source file folder'
-    )
+    try:
+        selected_dir = filedialog.askdirectory(
+            parent = root,
+            title = 'Please select source file folder'
+        )
+    finally:
+        root.destroy()
+    
     if selected_dir == '':
         return 'ERROR: No source file folder selected.'
     
