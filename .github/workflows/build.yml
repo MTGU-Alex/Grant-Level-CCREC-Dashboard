@@ -39,7 +39,7 @@ jobs:
           pyinstaller --add-data "assets/styles.css:assets" --add-data "locale_data.pkl:." --onefile main.py --name CCREC_dashboard_mac
           chmod +x dist/CCREC_dashboard_mac
           codesign --force --deep --sign - dist/CCREC_dashboard_mac
-          tar -czf CCREC_dashboard_mac.tar.gz -C dist/CCREC_dashboard_mac
+          tar -czf CCREC_dashboard_mac.tar.gz -C CCREC_dashboard_mac
 
       - name: realease to GitHub Windows
         if: runner.os == 'Windows'
