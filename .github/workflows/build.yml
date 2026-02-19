@@ -46,4 +46,4 @@ jobs:
         with:
           tag_name: ${{ inputs.version }}
           name: Downloadable Dashboard Files
-          files: dist/*
+          path: CCREC_dashboard_mac.tar.gz
