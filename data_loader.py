@@ -260,6 +260,7 @@ def load_data():
     }, inplace=True)
     
     ay_df = map_codes_to_strings(ay_df)
+    ay_df['Grade Level'] = ay_df['Grade Level'].astype('string')
 
     # getting cleaned/aggregated services
     aggregated_services, student_service_duration_by_month = create_service_aggregation(service_df)

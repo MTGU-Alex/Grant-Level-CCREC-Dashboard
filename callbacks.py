@@ -143,6 +143,7 @@ def register_callbacks(app, AY_df, agg_services_df, duration_by_student_month_ty
         ethnicity_fig = px.pie(enrollment_by_ethnicity, names='Ethnicity Code', values='Ethnicity Count', title='Enrollment by Ethnicity').update_layout(paper_bgcolor="#E5E5E5").update_traces(textinfo='value+percent')
 
         enrollment_by_grade = filtered_df.groupby('Grade Level').size().to_frame('Enrollment Count').reset_index()
+        enrollment_by_grade.sort_values('Grade Level', key=lambda x: x.map({grade: int(grade) for grade in enrollment_by_grade['Grade Level'].drop_duplicates().to_list()}), inplace=True)
         grade_fig = px.bar(enrollment_by_grade, x='Grade Level', y='Enrollment Count', text=enrollment_by_grade['Enrollment Count']).update_layout(paper_bgcolor="#E5E5E5", plot_bgcolor='lightgrey')
 
         enrollment_by_race = filtered_df.groupby('Race Code').size().to_frame('Race Count').reset_index().sort_values('Race Count')
