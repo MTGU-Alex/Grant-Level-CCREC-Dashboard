@@ -36,7 +36,7 @@ jobs:
       - name: Build Mac executable
         if: runner.os == 'macOS'
         run: |
-          pyinstaller --add-data "assets/styles.css:assets" --add-data "locale_data.pkl:." --onefile main.py --name CCREC_dashboard_mac
+          pyinstaller --add-data "assets/styles.css:assets" --add-data "locale_data.pkl:." --name "CCREC_dashboard_mac" main.py
           chmod +x dist/CCREC_dashboard_mac
           codesign --force --deep --sign - dist/CCREC_dashboard_mac
 
