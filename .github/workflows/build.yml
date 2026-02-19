@@ -41,9 +41,18 @@ jobs:
           codesign --force --deep --sign - dist/CCREC_dashboard_mac
           tar -czf myapp-macos.tar.gz -C dist CCREC_dashboard_mac
 
-      - name: realease to GitHub
+      - name: realease to GitHub Windows
+        if: runner.os == 'Windows'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.version }}
           name: Downloadable Dashboard Files
-          path: CCREC_dashboard_mac.tar.gz
+          path: dist/*
+
+      - name: realease to GitHub Mac
+        if: runner.os == 'macOS'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.version }}
+          name: Downloadable Dashboard Files
+          path: dist/CCREC_dashboard_mac.tar.gz
