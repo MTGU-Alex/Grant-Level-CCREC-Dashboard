@@ -210,7 +210,10 @@ def register_callbacks(app, AY_df, agg_services_df, duration_by_student_month_ty
         for col in service_columns:
             num_non_zero = (filtered_df[col] != 0).sum()
             total_len = len(filtered_df)
-            participation = round((num_non_zero/total_len)*100, 2)
+            if num_non_zero > 0:
+                participation = round((num_non_zero/total_len)*100, 2)
+            else:
+                participation = 0
 
             average_duration_mins = filtered_df[filtered_df[col] != 0][col].mean()
             average_duration_hours = round(average_duration_mins/60, 2)
@@ -301,15 +304,16 @@ def register_callbacks(app, AY_df, agg_services_df, duration_by_student_month_ty
 
         # Correcting left chart's x axis
         max_val = service_df['Participation'].max()
-        next_10_multiplier = max_val//10 + 1
-        left_axis = service_fig.layout.xaxis
-        ticks = left_axis.tickvals if left_axis.tickvals else [-num*10 for num in range(1, int(next_10_multiplier))]
-        
-        service_fig.update_xaxes(
-            tickvals=ticks,
-            ticktext=[abs(v) for v in ticks],
-            row=1, col=1
-        )
+        if type(max_val) == np.float64: 
+            next_10_multiplier = max_val//10 + 1
+            left_axis = service_fig.layout.xaxis
+            ticks = left_axis.tickvals if left_axis.tickvals else [-num*10 for num in range(1, int(next_10_multiplier))]
+            
+            service_fig.update_xaxes(
+                tickvals=ticks,
+                ticktext=[abs(v) for v in ticks],
+                row=1, col=1
+            )
 
         # CREATING service-participation-by-grade
         filtered_df['Total Service Time'] = filtered_df[service_types].sum(axis=1)/60
