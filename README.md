@@ -1,6 +1,6 @@
 # Open Source CCREC Dashboard
 This GitHub page contains the source code and executable files for the open source CCREC dashboard. In this google drive 
-<a href="https://tinyurl.com/Grant-Dashboard-Resources" target="_blank" rel="noopener noreferrer">
+<a href="https://tinyurl.com/Grant-Dashboard-Resources" target="_blank">
 https://tinyurl.com/Grant-Dashboard-Resources
 </a> you can find:
 - [Practice data](https://drive.google.com/drive/folders/1kDkPHDgVc5-5ae2jMbMxi9h8hg0D6kDH)
