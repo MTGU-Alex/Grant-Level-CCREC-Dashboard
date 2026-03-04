@@ -47,7 +47,7 @@ jobs:
         with:
           tag_name: ${{ inputs.version }}
           name: Downloadable Dashboard Files
-          files: dist/*
+          files: dist/CCREC_dashboard_windows.exe
 
       - name: realease to GitHub Mac
         if: runner.os == 'macOS'
