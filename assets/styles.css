@@ -1,32 +1,38 @@
-#demographics-full-header{
-    display: inline-block;
+#full-header{
+    display: inline-flex;
     width: 70%;
     background-color: #E5E5E5;
     border: 2px solid #17BECF;
     border-radius: 5px;
     margin-bottom: 0px;
+    height: 140px;
 }
  
-#demographics-header-left{
+#header-left{
     display: inline-flex;
     flex-direction: column;
-    width: 90%;
+    width: 70%;
 }
 
-#demographics-header-row-1{
+#header-row-1{
     display: flex;
     align-items: center;
 }
 
-#demographics-title, #services-title, #yty-title{
+#page-title{
+    font-size: 24px;
+}
+
+#page-title{
     padding-left: 40px;
 }
 
-#demographics-year-filter{
+#year-filter{
     width: 15%;
+    margin-left: 5px;
 }
 
-#demographics-header-row-2{
+#header-row-2{
     display: inline-flex;
     flex-direction: row;
     justify-content: space-between;
@@ -45,10 +51,14 @@
     font-weight: bold;
 }
 
-#demographics-header-right{
-    display: inline-flex;
-    flex-direction: column;
-    width: 10%;
+#header-right{
+    display: grid;
+    grid-template-rows: repeat(3, auto);
+    grid-auto-flow: column;
+    width: 30%;
+    height: 80%;
+    margin-top: 14px;
+    margin-right: 5px;
 }
 
 .link-button{
@@ -60,12 +70,12 @@
 }
 
 .link-button:hover {
-  background-color: darkgray; /* Darker background on hover */
-  cursor: pointer; /* Indicates interactivity */
+  background-color: darkgray; 
+  cursor: pointer; 
 }
 
 
-#demographics-filter-box{
+#filter-box{
     position: absolute;
     display: inline-block;
     width: 29%;
@@ -77,12 +87,12 @@
     overflow-y: scroll;
 }
 
-#demographics-filter-title{
+#filter-title{
     padding: 0;
     margin: 0;    
 }
 
-#demographics-filter-buttons{
+#filter-buttons{
     padding: 4px 8px;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -111,79 +121,15 @@
     min-width: 0;
 }
 
-#services-full-header{
-    display: inline-block;
-    width: 70%;
-    background-color: #E5E5E5;
-    border: 2px solid #17BECF;
-    border-radius: 5px;
-}
-
-#services-header-left{
-    display: inline-flex;
-    flex-direction: column;
-    width: 90%;
-}
-
-#services-header-row-1{
-    display: flex;
-    align-items: center;
-}
-
-#services-year-filter{
-    width: 15%;
-}
-
-#services-header-row-2{
-    display: inline-flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 80%;
-}
-
-#services-header-right{
-    display: inline-flex;
-    flex-direction: column;
-    width: 10%;
-}
-
-#services-filter-box{
-    position: absolute;
-    display: inline-block;
-    width: 29%;
-    background-color: #E5E5E5;
-    border: 2px solid #17BECF;
-    border-radius: 5px;
-    height: 140px;
-    margin-left: 5px;
-    overflow-y: scroll;
-}
-
-#services-filter-title{
-    padding: 0;
-    margin: 0;    
-}
-
-#services-filter-buttons{
-    padding: 4px 8px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    margin-right: 8px;
-    display: flex;
-    background-color: #eee;
-    justify-content: space-between;
-    align-items: center
-}
-
-#services-second-row-filters{
+#services-filters-div, #yty-filters-div{
     background-color: #E5E5E5;
     border: 2px solid #17BECF;
     border-radius: 5px;
     display: inline-block;
-    width: 200px;  
+    width: 250px;  
 }
 
-#threshold-title{
+#services-threshold-title, #yty-threshold-title{
     display: inline-block;
     font-weight: bold;
     font-size: 20px;
@@ -192,7 +138,7 @@
     margin-bottom: 10px;
 }
 
-#threshold-value{
+#services-threshold-value, #yty-threshold-value{
     display: inline-block;
     color: #17BECF;
     font-weight: bold;
@@ -202,7 +148,7 @@
     margin-bottom: 10px;
 }
 
-#service-time-slider{
+#services-time-slider, #yty-time-slider{
     margin-top: 0px;
     padding-top: 0px;
 }
@@ -212,127 +158,12 @@
     border-top: 2px solid #17BECF;
 }
 
-#service-checklist-div{
+#service-checklist-div, #yty-checklist-div{
     font-size: 20px;
-}
-
-#service-checklist-div{
     overflow-x: auto;
     white-space: nowrap;
 }
 
-/* --------- */
-#yty-full-header{
-    display: inline-block;
-    width: 70%;
-    background-color: #E5E5E5;
-    border: 2px solid #17BECF;
-    border-radius: 5px;
-    margin-bottom: 0px;
-}
-
-#yty-header-left{
-    display: inline-flex;
-    flex-direction: column;
-    width: 90%;
-}
-
-#yty-header-row-1{
-    display: flex;
-    align-items: center;
-}
-
-#yty-year-filter{
-    width: 15%;
-}
-
-#yty-header-row-2{
-    display: inline-flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 80%;
-}
-
-#yty-header-right{
-    display: inline-flex;
-    flex-direction: column;
-    width: 10%;
-}
-
-#yty-filter-box{
-    position: absolute;
-    display: inline-block;
-    width: 29%;
-    background-color: #E5E5E5;
-    border: 2px solid #17BECF;
-    border-radius: 5px;
-    height: 140px;
-    margin-left: 5px;
-    overflow-y: scroll;
-}
-
-#yty-filter-title{
-    padding: 0;
-    margin: 0;    
-}
-
-#yty-filter-buttons{
-    padding: 4px 8px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    margin-right: 8px;
-    display: flex;
-    background-color: #eee;
-    justify-content: space-between;
-    align-items: center
-}
-
-#yty-first-row{
-    height: 515px;
-}
-
-#yty-service-filters{
-    background-color: #E5E5E5;
-    border: 2px solid #17BECF;
-    border-radius: 5px;
-    display: inline-block;
-    width: 200px; 
-    height: 515px;
-}
-
-#yty-threshold-title{
-    display: inline-block;
-    font-weight: bold;
-    font-size: 20px;
-    margin-left: 5px;
-    margin-top: 0px;
-    margin-bottom: 10px;
-}
-
-#yty-threshold-value{
-    display: inline-block;
-    color: #17BECF;
-    font-weight: bold;
-    font-size: 20px;
-    margin-left: 5px;
-    margin-top: 0px;
-    margin-bottom: 10px;
-}
-
-#yty-service-type-div{
-    font-size: 15px;
-    overflow-x: auto;
-    white-space: nowrap;
-}
-
-#yty-second-row{
-    height: 515px;
-}
-
-#yty-third-row{
-    height: 515px;
-}
-
-#service-split-by-year{
+#yty-service-time-by-type{
     flex: 2;
 }

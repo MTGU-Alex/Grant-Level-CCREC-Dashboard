@@ -101,6 +101,19 @@ def map_codes_to_strings(ay_df):
             5: 'White',
             6: 'Two or More Races',
             7: 'Unknown'
+        },
+        'HS Grad Status code': {
+            1: 'Graduated',
+            2: 'Did Not Graduate',
+            3: 'Graduation Statud Unknown',
+            4: 'N/A',
+            5: 'In Grade 13'
+        },
+        'FAFSA status code': {
+            1: 'FAFSA Completed',
+            2: 'FAFSA Not Completed',
+            3: 'Not Collected',
+            4: 'N/A'
         }
     }
     for item in code_mappings:
@@ -183,27 +196,33 @@ def process_subdirs(subdir_list):
 
 # function that takes path to CCREC data folder, 
 # returns AY, student, service dfs of all years combined
-def load_data():
+def load_data(input):
 
-    # setting up tk root for folder selection
-    root = tk.Tk()
-    root.withdraw()
-    root.attributes('-topmost', True)
-    root.update()
+    if input == 'default':
+        # setting up tk root for folder selection
+        root = tk.Tk()
+        root.withdraw()
+        root.attributes('-topmost', True)
+        root.update()
 
-    # opens directory selection window
-    try:
-        selected_dir = filedialog.askdirectory(
-            parent = root,
-            title = 'Please select source file folder'
-        )
-    finally:
-        root.destroy()
-    
-    if selected_dir == '':
-        return 'ERROR: No source file folder selected.'
-    
-    print(f'- Reading data from: {selected_dir}')
+        # opens directory selection window
+        try:
+            selected_dir = filedialog.askdirectory(
+                parent = root,
+                title = 'Please select source file folder'
+            )
+        finally:
+            root.destroy()
+        
+        if selected_dir == '':
+            return 'ERROR: No source file folder selected.'
+        
+        print(f'- Reading data from: {selected_dir}')
+    else:
+        if os.path.isdir(input):
+            selected_dir = input
+        else:
+            return('ERROR: The input passed in through the terminal is not a folder.')
     
     files = []
     subdirs = []
@@ -233,7 +252,7 @@ def load_data():
         print('- Ay and service data frames successfully loaded from CSV files ')
 
     # Getting locales by NCES code, cleaning and renaming columns
-    ay_df = ay_df[['High School AY', 'Program Model Code', 'School NCES ID', 'National CCREC Student ID', 'Student Type code', 'Gender Code', 'Ethnicity Code', 'Race Code', 'Grade Level', 'Enrollment Status Code', 'Service 1 Total', 'Service 2 Total', 'Service 3 Total', 'Service 4 Total', 'Service 5 Total', 'Service 6 Total', 'Service 7 Total', 'Service 8 Total', 'Service 9 Total', 'Service 10 Total', 'Service 11 Total', 'Service 12 Total', 'Service 13 Total']].rename(columns={'School NCES ID': 'School NCES ID INT'})
+    ay_df = ay_df[['High School AY', 'Program Model Code', 'School NCES ID', 'National CCREC Student ID', 'Student Type code', 'Gender Code', 'Ethnicity Code', 'Race Code', 'Grade Level', 'Enrollment Status Code', 'Service 1 Total', 'Service 2 Total', 'Service 3 Total', 'Service 4 Total', 'Service 5 Total', 'Service 6 Total', 'Service 7 Total', 'Service 8 Total', 'Service 9 Total', 'Service 10 Total', 'Service 11 Total', 'Service 12 Total', 'Service 13 Total', 'HS Grad Status code', 'FAFSA status code', 'Algebra 1- Grade of Completion', 'Final Term GPA', 'Cumulative GPA', 'IPEDS numbers of the Schools Visited', 'First College Attended Name', 'First College Attended IPEDS', 'Graduated Y/N' , 'Degree Title', 'Dual Enrollment', 'Dual Enrollment Degree']].rename(columns={'School NCES ID': 'School NCES ID INT'})
     ay_df['School NCES ID'] = ay_df['School NCES ID INT'].astype('string')
     ay_df.drop(columns='School NCES ID INT', inplace=True)
     ay_df.loc[:, 'School NCES ID'] = ay_df['School NCES ID'].str.pad(width=12, side='left', fillchar='0')

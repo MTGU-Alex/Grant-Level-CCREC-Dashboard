@@ -8,9 +8,13 @@ from dash import Dash, html, dcc
 import data_loader
 import components
 from callbacks import register_callbacks
+import pickle
 
 # Reading in data with data_loader.py and mapping codes
-data_frames = data_loader.load_data()
+if len(sys.argv) > 1:
+    data_frames = data_loader.load_data(sys.argv[1])
+else:
+    data_frames = data_loader.load_data('default')
 if type(data_frames) == str:
     print(data_frames)
     sys.exit()
@@ -22,19 +26,9 @@ duration_by_student_month_type = data_frames['duration_by_student_month_type']
 app = Dash(__name__, suppress_callback_exceptions=True)
 app.title = 'Dashboard'
 
-app.layout = html.Div([
-    dcc.Location(id='url'),
-    dcc.Store(id='temp-demographics-filter-store'),
-    dcc.Store(id='temp-services-filter-store'),
-    dcc.Store(id='temp-yty-filter-store'),
-    dcc.Store(id='demographics-filter-store'),
-    dcc.Store(id='services-filter-store'),
-    dcc.Store(id='yty-filter-store'),
-    html.Div(id='page-content')
-])
+app.layout = components.get_layout(AY_df['High School AY'].unique())
 register_callbacks(app, AY_df, agg_services_df, duration_by_student_month_type)
 
 # Running Dash app
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)
-    
