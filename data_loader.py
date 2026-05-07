@@ -105,7 +105,7 @@ def map_codes_to_strings(ay_df):
         'HS Grad Status code': {
             1: 'Graduated',
             2: 'Did Not Graduate',
-            3: 'Graduation Statud Unknown',
+            3: 'Graduation Status Unknown',
             4: 'N/A',
             5: 'In Grade 13'
         },
@@ -113,6 +113,12 @@ def map_codes_to_strings(ay_df):
             1: 'FAFSA Completed',
             2: 'FAFSA Not Completed',
             3: 'Not Collected',
+            4: 'N/A'
+        },
+        'Algebra 1- Grade of Completion': {
+            1: 'Enrolled and Completed',
+            2: 'Enrolled But Not Completed',
+            3: 'Not enrolled',
             4: 'N/A'
         }
     }

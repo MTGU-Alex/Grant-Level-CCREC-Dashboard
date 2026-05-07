@@ -28,7 +28,7 @@
 }
 
 #year-filter{
-    width: 15%;
+    width: 100%;
     margin-left: 5px;
 }
 
@@ -110,6 +110,7 @@
     width: 100%;
     gap: 10px;
     margin-left: 0px;
+    align-items: stretch;
 }
 
 .graph{
@@ -119,6 +120,7 @@
     background-color: #E5E5E5;
     padding: 2px;
     min-width: 0;
+    height: 500px;
 }
 
 #services-filters-div, #yty-filters-div{
@@ -166,4 +168,29 @@
 
 #yty-service-time-by-type{
     flex: 2;
+}
+
+#gpa-radio-div{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#gpa-slider-div, #gpa-benchmark-div{
+    display: inline-flex;
+    width: 100%;
+}
+
+#gpa-ranges-title, #gpa-benchmark-title{
+    text-align: left;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-left: 4px;
+    font-size: 15px;
+}
+
+#gpa-by-grade{
+    flex: 3;
 }

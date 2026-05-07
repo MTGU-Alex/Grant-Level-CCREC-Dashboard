@@ -17,6 +17,8 @@ pio.templates["my_theme"] = dict(
 )
 pio.templates.default = "my_theme"
 
+benchmark_bar_color = 'SteelBlue'
+
 service_columns = ['Tutoring/Homework Assistance', 'Mentoring', 'Financial Aid Counseling/Advising', 'Counseling/Advising', 'College Visit', 'Job Site Visit/Job Shadowing', 'Summer Programs', 'Educational Field Trips', 'Student Workshops', 'Parent/Family Workshops', 'Family Counseling/ Advising', 'Family College Visit', 'Other Family Events']
 
 month_map = {
@@ -33,6 +35,9 @@ month_map = {
     11: 'Nov',
     12: 'Dec'
 }
+
+def get_blank_fig():
+    return px.bar()
 
 # =======================
 # == ENROLLMENT CHARTS ==
@@ -319,3 +324,115 @@ def get_hours_per_student_by_month(AY: pd.DataFrame, agg_services_df: pd.DataFra
         markers=True,
         title='Average Service Hours per Student by Month',
     )
+
+# =======================
+# == OBJECTIVES CHARTS ==
+# =======================
+def get_gpa_by_grade(AY: pd.DataFrame, gpa_type, gpa_low, gpa_high, gpa_benchmark):
+    gpas = AY[['Grade Level', gpa_type]]
+    gpas = gpas[~gpas['Grade Level'].isin(['7', '8'])]
+    gpas[gpa_type] = gpas[gpa_type].fillna(9.99)
+    
+    conditions = [
+        (gpas[gpa_type] <= gpa_low),
+        ((gpas[gpa_type] > gpa_low) & (gpas[gpa_type] < gpa_high)),
+        ((gpas[gpa_type] >= gpa_high) & (gpas[gpa_type] < 9))
+    ]
+
+    choices = [f'Low: <= {gpa_low}', f'Medium: > {gpa_low}; < {gpa_high}', f'High: >= {gpa_high}']
+    gpas['GPA Range'] = np.select(conditions, choices, default='Unknown')
+    
+    gpa_range_counts = gpas.groupby(['Grade Level', 'GPA Range']).size().to_frame('Student Count').reset_index()
+    gpa_range_counts['Percentage'] = gpa_range_counts.groupby('Grade Level')['Student Count'].transform(lambda x: round(x/x.sum()*100, 1))
+    gpa_range_counts.sort_values('Grade Level', key=lambda x: x.map({grade: int(grade) for grade in gpa_range_counts['Grade Level'].drop_duplicates().to_list()}), inplace=True)
+
+    # backup chart
+    first_chart = px.bar(gpa_range_counts,
+        x='Grade Level',
+        y='Percentage',
+        barmode='stack',
+        color='GPA Range',
+        title='GPA By Grade Level',
+        category_orders={'GPA Range': [f'Low: <= {gpa_low}', f'Medium: > {gpa_low}; < {gpa_high}', f'High: >= {gpa_high}', 'Unknown']},
+        text_auto=True
+    ).update_traces(
+        texttemplate='%{y}%'
+    )
+
+    gpas_pivoted = gpa_range_counts.pivot(index='Grade Level', columns='GPA Range', values='Percentage').reset_index()
+    avg_by_grade = gpas[gpas[gpa_type] != 9.99].groupby('Grade Level')[gpa_type].mean().to_frame('Average GPA').reset_index()
+    avg_by_grade['Average GPA'] = round(avg_by_grade['Average GPA'], 2)
+    gpas_pivoted = gpas_pivoted.merge(avg_by_grade, on='Grade Level', how='left')
+    gpas_pivoted['Grade Level'] = gpas_pivoted['Grade Level']
+    
+    stack_cols = [f'Low: <= {gpa_low}', f'Medium: > {gpa_low}; < {gpa_high}', f'High: >= {gpa_high}', 'Unknown']
+
+    fig = make_subplots(specs=[[{'secondary_y': True}]])
+
+    for col in stack_cols:
+        if col not in gpas_pivoted.columns:
+            continue
+        fig.add_trace(
+            go.Bar(
+                x=gpas_pivoted['Grade Level'],
+                y=gpas_pivoted[col],
+                offsetgroup=0,
+                name=col,
+                text=gpas_pivoted[col].astype('str')+'%'
+            ),
+            secondary_y=False
+        )
+
+    fig.add_trace(
+        go.Bar(
+            x=gpas_pivoted['Grade Level'],
+            y=gpas_pivoted['Average GPA'],
+            name='Average GPA',
+            offsetgroup=1,
+            text=gpas_pivoted['Average GPA']
+        ),
+        secondary_y=True
+    )
+
+    fig.update_layout(
+        barmode='stack',
+        title='GPA Ranges and Averages'
+    )
+
+    fig.update_xaxes(
+        type='category',
+        categoryarray=['9', '10', '11', '12'],
+        title='Grade Level'
+    )
+
+    fig.update_yaxes(
+        title_text='Percent of Students',
+        range=[0, 100],
+        showticklabels=False,
+        secondary_y=False
+    )
+
+    fig.update_yaxes(
+        title_text='Average GPA',
+        range = [0, 4],
+        secondary_y=True
+    )
+
+    fig.add_hline(
+        y=gpa_benchmark,
+        line_dash="dash",
+        line_width=1,
+        line_color=benchmark_bar_color,
+        secondary_y=True
+    )
+
+    return fig
+
+def get_alg1_by_grade(AY):
+    return px.bar()
+
+def get_fafsa(AY):
+    return px.bar()
+
+def get_graduation_and_pse(AY):
+    return px.bar()

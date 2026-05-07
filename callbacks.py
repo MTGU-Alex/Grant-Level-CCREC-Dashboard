@@ -41,8 +41,26 @@ def get_services_yty_page(AY, duration_by_student_month_type, agg_services_df, t
 
     return components.get_yty_layout(threshold, service_types, service_type_filter, service_time_by_type_and_year, enrollment_by_year, participation_by_month, hours_per_student_by_month)
 
-def get_objective_page(AY):
-    return(html.H1('WORK IN PROGESS'))
+def get_objective_page(AY, gpa_type, gpa_range, gpa_benchmark):
+    if not gpa_range:
+        gpa_low = 2
+        gpa_high = 3
+    else:
+        gpa_low = gpa_range[0]
+        gpa_high = gpa_range[1]
+
+    if not gpa_type:
+        gpa_type = 'Cumulative GPA'
+
+    if not gpa_benchmark:
+        gpa_benchmark = 2.5
+        
+    gpa_by_grade = charts.get_gpa_by_grade(AY, gpa_type, gpa_low, gpa_high, gpa_benchmark)
+    alg1_by_grade = charts.get_alg1_by_grade(AY)
+    fafsa_completion = charts.get_fafsa(AY)
+    graduation_and_pse = charts.get_graduation_and_pse(AY)
+    
+    return components.get_objectives_layout(gpa_type, gpa_low, gpa_high, gpa_benchmark, gpa_by_grade, alg1_by_grade, fafsa_completion, graduation_and_pse)
 
 def get_objective_yty_page(AY):
     return(html.H1('WORK IN PROGESS'))
@@ -79,12 +97,16 @@ def register_callbacks(app, AY_df: pd.DataFrame, agg_services_df: pd.DataFrame, 
          Input('services-time-slider', 'value', allow_optional=True),
          Input('services-type-filter', 'value', allow_optional=True),
          Input('yty-time-slider', 'value', allow_optional=True),
-         Input('yty-type-filter', 'value', allow_optional=True)],
+         Input('yty-type-filter', 'value', allow_optional=True),
+         
+         Input('gpa-radio', 'value', allow_optional=True),
+         Input('gpa-range-slider', 'value', allow_optional=True),
+         Input('gpa-benchmark-slider', 'value', allow_optional=True)],
         
         State('filter-store', 'data'),
         State('current-page', 'data')
     )
-    def update_page(selected_year, demographics_btn, services_btn, services_yty_btn, objectives_btn, objectives_yty_btn, combare_btn, locale_click, gender_click, ethnicity_click, grade_click, race_click, remove_clicks, services_threshold, services_type_filter, yty_threshold, yty_type_filter, active_filters, current_page):
+    def update_page(selected_year, demographics_btn, services_btn, services_yty_btn, objectives_btn, objectives_yty_btn, combare_btn, locale_click, gender_click, ethnicity_click, grade_click, race_click, remove_clicks, services_threshold, services_type_filter, yty_threshold, yty_type_filter, gpa_type, gpa_range, gpa_benchmark, active_filters, current_page):
         
         trigger = ctx.triggered_id
         filters = active_filters.copy()
@@ -133,14 +155,14 @@ def register_callbacks(app, AY_df: pd.DataFrame, agg_services_df: pd.DataFrame, 
                 contents = get_services_yty_page(AY_df.copy(), duration_by_student_month_type.copy(), agg_services_df.copy(), yty_threshold, yty_type_filter)
                 page_lable = 'Services YTY'
             case 'objectives':
-                contents = get_objective_page(filtered_AY)
+                contents = get_objective_page(filtered_AY, gpa_type, gpa_range, gpa_benchmark)
                 page_lable = 'Objectives'
             case 'objectives-yty':
                 contents = get_objective_yty_page(filtered_AY)
                 page_lable = 'Objectives YTY'
             case 'compare':
                 contents = get_compare_page(filtered_AY)
-                page_lable = 'compare'
+                page_lable = 'Compare'
 
         service_columns = ['Tutoring/Homework Assistance', 'Mentoring', 'Financial Aid Counseling/Advising', 'Counseling/Advising', 'College Visit', 'Job Site Visit/Job Shadowing', 'Summer Programs', 'Educational Field Trips', 'Student Workshops', 'Parent/Family Workshops', 'Family Counseling/ Advising', 'Family College Visit', 'Other Family Events']
         total_hours = round(filtered_AY[service_columns].sum().sum()/60, 2)
@@ -157,5 +179,3 @@ def register_callbacks(app, AY_df: pd.DataFrame, agg_services_df: pd.DataFrame, 
             )
 
         return contents, f'CCREC Grant Level Dashboard: {page_lable}', total_hours, total_students, total_schools, page, filter_tags, filters
-
-     

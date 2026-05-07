@@ -33,9 +33,9 @@ def get_layout(years):
                 html.Button('Demographics', id='demographics-btn', n_clicks=0, className='link-button'),
                 html.Button('Services', id='services-btn', n_clicks=0, className='link-button'),
                 html.Button('Services YTY', id='services-yty-btn', n_clicks=0, className='link-button'),
+                html.Button('Compare', id='compare-btn', n_clicks=0, className='link-button'),
                 html.Button('Objectives', id='objectives-btn', n_clicks=0, className='link-button'),
-                html.Button('Objectives YTY', id='objectives-yty-btn', n_clicks=0, className='link-button'),
-                html.Button('Compare', id='compare-btn', n_clicks=0, className='link-button')
+                html.Button('Objectives YTY', id='objectives-yty-btn', n_clicks=0, className='link-button')
             ], id='header-right')
         ], id='full-header'),
         html.Div([
@@ -124,4 +124,32 @@ def get_yty_layout(threshold, service_types, service_type_filter, service_time_b
         html.Div([
             dcc.Graph(figure=hours_per_student_by_month, id='avg-service-hours-per-student-by-month', className='graph')
         ], id='yty-row-3', className='graph-flex')
+    ])
+
+def get_objectives_layout(gpa_type, gpa_low, gpa_high, gpa_benchmark, gpa_by_grade, alg1_by_grade, fafsa_completion, graduation_and_pse):
+    return html.Div([
+        html.Div([
+            html.Div([
+                html.Div([
+                    dcc.RadioItems(['Cumulative GPA', 'Final Term GPA'], gpa_type, inline=True, id='gpa-radio'),
+                ], id='gpa-radio-div'),
+                html.Div([
+                    html.H4('GPA Band Ranges:', id='gpa-ranges-title'),
+                    dcc.RangeSlider(0, 4, .1, value=[gpa_low, gpa_high], id='gpa-range-slider')
+                ], id='gpa-slider-div'),
+                html.Div([
+                    html.H4('GPA Benchmark: ', id='gpa-benchmark-title'),
+                    dcc.Slider(id='gpa-benchmark-slider', min=0, max=4, step=.1, value=gpa_benchmark)
+                ], id='gpa-benchmark-div'),
+                html.Hr(className='hr-line')
+            ], id='objectives-filters', className='graph'),
+            dcc.Graph(figure=gpa_by_grade, id='gpa-by-grade', className='graph')
+        ], id='objectives-row-1', className='graph-flex'),
+        html.Div([
+            dcc.Graph(figure=alg1_by_grade, id='alg1-by-grade', className='graph'),
+            dcc.Graph(figure=fafsa_completion, id='fafsa-completion', className='graph')
+        ], id='objectives-row-2', className='graph-flex'),
+        html.Div([
+            dcc.Graph(figure=graduation_and_pse, id='graduation-and-pse', className='graph')
+        ], id='objectives-row-3', className='graph-flex')
     ])
