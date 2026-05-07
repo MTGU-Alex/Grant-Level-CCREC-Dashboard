@@ -1,4 +1,4 @@
-# Open Source CCREC Dashboard
+# Open Source Grant Level CCREC Dashboard
 This GitHub page contains the source code and executable files for the open source CCREC dashboard. In this google drive [https://tinyurl.com/Grant-Dashboard-Resources](https://tinyurl.com/Grant-Dashboard-Resources) you can find:
 - [Practice data](https://drive.google.com/drive/folders/1kDkPHDgVc5-5ae2jMbMxi9h8hg0D6kDH)
 - [A full guide for downloading and running the grant level dashboard on Windows](https://drive.google.com/file/d/1NhZns5nUHFg3imEkpOB6L18XwsY6kBOo/view?usp=drive_link)
