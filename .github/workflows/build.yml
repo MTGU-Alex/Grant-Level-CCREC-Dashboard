@@ -31,7 +31,7 @@ jobs:
 
       - name: Build windows executable
         if: runner.os == 'Windows'
-        run: pyinstaller --add-data "assets/styles.css;assets" --add-data "locale_data.pkl;." --add-data "district_data.pkl;. --onefile main.py --name CCREC_dashboard_windows
+        run: pyinstaller --add-data "assets/styles.css;assets" --add-data "locale_data.pkl;." --add-data "district_data.pkl;." --onefile main.py --name CCREC_dashboard_windows
 
       - name: Build Mac executable
         if: runner.os == 'macOS'
