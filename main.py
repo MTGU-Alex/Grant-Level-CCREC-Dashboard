@@ -21,13 +21,14 @@ if type(data_frames) == str:
 AY_df = data_frames['ay_df']
 agg_services_df = data_frames['agg_services_df']
 duration_by_student_month_type = data_frames['duration_by_student_month_type']
+college_visits = data_frames['college_visits']
 
 # Setting up Dash app
 app = Dash(__name__, suppress_callback_exceptions=True)
 app.title = 'Dashboard'
 
 app.layout = components.get_layout(AY_df['High School AY'].unique())
-register_callbacks(app, AY_df, agg_services_df, duration_by_student_month_type)
+register_callbacks(app, AY_df, agg_services_df, duration_by_student_month_type, college_visits)
 
 # Running Dash app
 if __name__ == "__main__":

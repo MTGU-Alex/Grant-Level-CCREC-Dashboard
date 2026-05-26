@@ -46,6 +46,14 @@ def create_service_aggregation(service_df):
 
     return aggregated_services, service_duration_by_student_month_type
 
+def create_college_visits_df(ay_df: pd.DataFrame):
+    college_visits = ay_df[~ay_df['IPEDS numbers of the Schools Visited'].isna()][['National CCREC Student ID', 'IPEDS numbers of the Schools Visited']]
+    college_visits['IPEDS numbers of the Schools Visited'] = college_visits['IPEDS numbers of the Schools Visited'].str.split(',')
+    college_visits = college_visits.explode('IPEDS numbers of the Schools Visited')
+    college_visits['IPEDS numbers of the Schools Visited'] = college_visits['IPEDS numbers of the Schools Visited'].str.strip()
+    college_visits = college_visits.groupby('National CCREC Student ID')['IPEDS numbers of the Schools Visited'].agg(list).reset_index()
+    return college_visits
+
 # Finds locale from NCES code
 def get_locale(ay_df):
     print('- Finding locale based on NCES ID')
@@ -61,12 +69,11 @@ def get_locale(ay_df):
     missing_len = len(missing_ay)
     missing_ay.loc[:, ['LOCALE_NAME', 'LOCAL_CATEGORY']] = 'Unknown'
     if missing_len > 0:
-        print(f'- {missing_len} of {ay_len} total records are missing a matching NCES ID.')
+        print(f'- {missing_len} of {ay_len} total records are missing a matching NCES ID for locale lookup.')
 
     # filtering locales by year
     ay_df['Year of School Year Start'] = ay_df['High School AY'].str[:4].astype('int')
     ay_df = ay_df[(ay_df['Year of School Year Start'] >= ay_df['START_YEAR']) & (ay_df['Year of School Year Start'] <= ay_df['END_YEAR'])]
-    ay_after_filter_len = len(ay_df)
 
     # combining missing and filtered
     ay_df = pd.concat([ay_df, missing_ay])
@@ -78,6 +85,38 @@ def get_locale(ay_df):
         print(f'WARNING: {final_len} records found after merging with locale dataset, {ay_len} records before.')
 
     return ay_df
+
+# Finds district from NCES code
+def get_district(ay_df: pd.DataFrame):
+    print('- Finding district based on NCES ID')
+    ay_len = len(ay_df)
+
+    # merging district pickle with ay
+    district_pickle_path = get_data_path('district_data.pkl')
+    district_df = pd.read_pickle(district_pickle_path)
+    ay_df = ay_df.merge(district_df, how='left', left_on='School NCES ID', right_on='NCESSCH')
+
+    # getting records with missing district
+    missing_ay = ay_df[ay_df['NCESSCH'].isna()]
+    missing_len = len(missing_ay)
+    missing_ay.loc[:, 'DISTRICT_NAME'] = 'Unknown'
+    if missing_len > 0:
+        print(f'- {missing_len} of {ay_len} total records are missing a matching NCES ID for district lookup.')
+
+    # filtering  districts by year
+    ay_df = ay_df[(ay_df['Year of School Year Start'] >= ay_df['START_YEAR']) & (ay_df['Year of School Year Start'] <= ay_df['END_YEAR'])]
+
+    # combining missing and filtered 
+    ay_df = pd.concat([ay_df, missing_ay])
+    ay_df.drop(columns=['NCESSCH', 'START_YEAR', 'END_YEAR'], inplace=True)
+    ay_df.rename(columns={'DISTRICT_NAME': 'District'}, inplace=True)
+    final_len = len(ay_df)
+
+    if final_len != ay_len:
+        print(f'WARNING: {final_len} records found after merging with district dataset, {ay_len} records before.')
+
+    return ay_df
+
 
 # Function for mapping Gender/race/ethnicity codes to name in text
 def map_codes_to_strings(ay_df):
@@ -115,7 +154,7 @@ def map_codes_to_strings(ay_df):
             3: 'Not Collected',
             4: 'N/A'
         },
-        'Algebra 1- Grade of Completion': {
+        'Algebra 1 Status': {
             1: 'Enrolled and Completed',
             2: 'Enrolled But Not Completed',
             3: 'Not enrolled',
@@ -263,6 +302,7 @@ def load_data(input):
     ay_df.drop(columns='School NCES ID INT', inplace=True)
     ay_df.loc[:, 'School NCES ID'] = ay_df['School NCES ID'].str.pad(width=12, side='left', fillchar='0')
     ay_df = get_locale(ay_df)
+    ay_df = get_district(ay_df)
 
     service_cols = [col for col in ay_df.columns if 'Service' in col]
     for col in service_cols:
@@ -281,7 +321,8 @@ def load_data(input):
         'Service 10 Total': 'Parent/Family Workshops',
         'Service 11 Total': 'Family Counseling/ Advising',
         'Service 12 Total': 'Family College Visit',
-        'Service 13 Total': 'Other Family Events'
+        'Service 13 Total': 'Other Family Events',
+        'Algebra 1- Grade of Completion': 'Algebra 1 Status'
     }, inplace=True)
     
     ay_df = map_codes_to_strings(ay_df)
@@ -289,6 +330,9 @@ def load_data(input):
 
     # getting cleaned/aggregated services
     aggregated_services, student_service_duration_by_month = create_service_aggregation(service_df)
+
+    # getting college visit df
+    college_visits = create_college_visits_df(ay_df)
     
     # Returns dictionary of the 3 dfs
     print('- Data load complete!')
@@ -297,7 +341,5 @@ def load_data(input):
         'ay_df': ay_df,
         'agg_services_df': aggregated_services,
         'duration_by_student_month_type': student_service_duration_by_month,
+        'college_visits': college_visits
     }
-
-if __name__ == '__main__':
-    load_data()

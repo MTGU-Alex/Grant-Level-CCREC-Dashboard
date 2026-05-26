@@ -12,4 +12,5 @@ nces_data.csv
 temp.py
 .vscode/
 .idea/
-main.py
+local_main.py
+raw_district_files/

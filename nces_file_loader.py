@@ -1,21 +1,27 @@
 '''
 Helper script for formating yearly NCES locale files into a single pickle.
-Raw files go in \\raw_locale_files
-Each file needs fields: nces id, school name, Locale code, and school year
+Raw files go in \\raw_locale_files, district files go in \\raw_district_files
+Each locale file needs fields: nces id, school name, Locale code, and school year
 - Code used for cleaning csvs below (commented out)
 
 NCES LOCALES: https://data-nces.opendata.arcgis.com/search?groupIds=455147561fd3416daa180395fb4e9237
 - Can't find 2020-21
 
+NCES DISTRICTS: https://nces.ed.gov/ccd/files.asp#Fiscal:2,LevelId:7,SchoolYearId:38,Page:1
+- use "Directory" for data file download
+
 '''
 
 import pandas as pd
 import numpy as np
+import pickle
 import os
 
 current_dir = os.getcwd()
 locale_dir = current_dir+'\\raw_locale_files\\'
+district_dir = current_dir+'\\raw_district_files\\'
 
+#'''
 # iterating through non-bkup files, concat with full_df
 full_df = pd.DataFrame()
 for locale_file in [file_name for file_name in os.listdir(locale_dir) if '_bkup' not in file_name]:
@@ -56,7 +62,43 @@ full_df['LOCALE_NAME'] = full_df['LOCALE'].map(locale_mapping)
 full_df['LOCAL_CATEGORY'] = full_df['LOCALE_NAME'].str.split().str[0]
 
 # pickling final results
-#full_df.to_pickle(current_dir+'\\locale_data.pkl')
+full_df.to_pickle(current_dir+'\\locale_data.pkl')
+#'''
+
+# ===================
+# ===  DISTRICT =====
+# ===================
+
+#'''
+# Reading in district files (encoding latin-1 for SAS7BDAT style encoding)
+district_df = pd.DataFrame()
+for district_file in [district_dir+file_name for file_name in os.listdir(district_dir) if '_bkup' not in file_name]:
+    df = pd.read_csv(district_file, low_memory=False, encoding='latin-1', dtype={'NCESSCH': 'str', 'LEAID': 'str'})
+    if 'SURVYEAR' in df.columns:
+        df.rename(columns={'SURVYEAR': 'SCHOOL_YEAR'}, inplace=True)
+    df = df[['SCHOOL_YEAR', 'NCESSCH', 'LEAID', 'LEA_NAME', 'SCH_NAME']]
+    district_df = pd.concat([district_df, df])
+
+# Getting prev/next localte and years then filtering rows
+district_df['LEA_YEAR_INT'] = district_df['SCHOOL_YEAR'].str.split('-').str[0].fillna(1).astype(int)
+district_df = district_df[['LEA_YEAR_INT', 'NCESSCH', 'LEAID', 'LEA_NAME']].drop_duplicates()
+district_df = district_df.sort_values(['NCESSCH', 'LEA_YEAR_INT'])
+district_df[['PREV_LEA_YEAR', 'PREV_DIST_NAME']] = district_df.groupby('NCESSCH')[['LEA_YEAR_INT', 'LEA_NAME']].shift(periods=1)
+district_df = district_df[district_df['PREV_DIST_NAME'] != district_df['LEA_NAME']]
+district_df[['NEXT_LEA_YEAR', 'NEXT_DIST_NAME']] = district_df.groupby('NCESSCH')[['LEA_YEAR_INT', 'LEA_NAME']].shift(periods=-1)
+
+# Setting start year and end year for each district year range
+district_df['START_YEAR'] = np.where(district_df['PREV_LEA_YEAR'].isna(), 1, district_df['LEA_YEAR_INT'])
+district_df['NEXT_LEA_YEAR'] = district_df['NEXT_LEA_YEAR'].fillna(9999)
+district_df = district_df[['NCESSCH', 'LEA_NAME', 'START_YEAR', 'NEXT_LEA_YEAR']].rename(columns={'NEXT_LEA_YEAR': 'END_YEAR', 'LEA_NAME': 'DISTRICT_NAME'})
+
+# Pickling district results
+district_df.to_pickle(current_dir+'\\district_data.pkl')
+#'''
+
+    
+
+
 
 # cleaning files with no school year column
 '''

@@ -131,6 +131,10 @@
     width: 250px;  
 }
 
+#enrollment-by-district{
+    flex: 2.04;
+}
+
 #services-threshold-title, #yty-threshold-title{
     display: inline-block;
     font-weight: bold;
@@ -191,6 +195,93 @@
     font-size: 15px;
 }
 
+#sankey-level-title{
+    text-align: center;
+    margin: 3px;
+}
+
+.sankey-level-flex{
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+    padding: 2px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.sankey-drop-down{
+    width: 100%;
+    margin: 0px;
+}
+
+.sankey-drop-down-div{
+    width: 100%;
+    margin-right: 5px;
+}
+
+.sankey-level-label{
+    margin: 0px;
+    font-weight: bold;
+    white-space: nowrap;
+    margin-right: 10px;
+}
+
 #gpa-by-grade{
     flex: 3;
+}
+
+#fafsa-completion{
+    flex: 1;
+}
+
+#fafsa-no-seniors-text{
+    font-size: 50px;
+    text-align: center;
+}
+
+#alg1-by-grade{
+    flex: 2;
+}
+
+#average-gpa-by-year{
+    flex: 3;
+}
+
+#yty-gpa-radio-div{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#objectives-yty-options-parent-div{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow-y: auto;
+}
+
+.yty-option-div{
+    border: 2px solid green;
+    border-radius: 5px;
+}
+
+.yty-benchmark-div, .yty-increase-div, .yty-benchmark-year-div{
+    width: 100%;
+    align-items: center;
+    margin-top: 0px;
+    margin-bottom: 3px;
+}
+
+.options-input, .options-text{
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.options-text{
+    font-size: 14px;
+}
+
+#compare-filters-div{
+    flex: .5;
 }
