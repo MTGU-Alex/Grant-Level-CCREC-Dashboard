@@ -31,7 +31,6 @@ body {
 }
 
 #app-container {
-    max-width: 1920px;
     margin: 0 auto;
 }
 
@@ -239,8 +238,8 @@ body {
     background-color: #FFFFFF;
     border: 1px solid #D9DADB;
     border-radius: 6px;
-    min-width: 230px;
-    max-width: 260px;
+    min-width: 260px;
+    max-width: 290px;
     padding: 12px;
     overflow-y: auto;
     height: auto;
@@ -278,11 +277,11 @@ body {
 .checklist-container {
     font-size: 12px;
     overflow-y: auto;
-    max-height: 280px;
+    max-height: 300px;
 }
 
 .service-checklist label {
-    display: block;
+    display: inline;
     padding: 2px 0;
     font-size: 12px;
 }

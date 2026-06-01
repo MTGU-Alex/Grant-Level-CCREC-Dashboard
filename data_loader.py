@@ -4,7 +4,6 @@ Handles file selection, CSV reading, data cleaning, and enrichment.
 """
 
 import tkinter as tk
-from constants import SERVICE_COLUMNS
 from tkinter import filedialog
 import pandas as pd
 from tabulate import tabulate
@@ -16,6 +15,7 @@ from constants import (
     CODE_MAPPINGS,
     SERVICE_COLUMN_RENAME,
     AY_COLUMNS_TO_KEEP,
+    SERVICE_COLUMNS
 )
 
 

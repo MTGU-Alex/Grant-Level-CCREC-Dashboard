@@ -35,7 +35,6 @@ def get_services_layout(
                         id='services-type-filter',
                         options=service_types,
                         value=selected_types,
-                        inline=False,
                         className='service-checklist',
                     ),
                 ], className='checklist-container'),
