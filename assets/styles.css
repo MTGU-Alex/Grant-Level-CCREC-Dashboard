@@ -1,475 +1,287 @@
-/* "assets/styles.css" */
-/* ================================================================
-   CCREC Grant Level Dashboard — Stylesheet
-   ----------------------------------------------------------------
-   Palette
-     --blue:        #0F5C83   Primary  (borders, nav, headings)
-     --blue-dark:   #0a3f5c   Hover / active state
-     --blue-light:  #d0e4ef   Filter pill background
-     --orange:      #d75426   Accent   (stat numbers, remove buttons)
-     --orange-dark: #a83e1c   Orange hover
-     --green:       #898E3E   Secondary accent
-     --black:       #231F20   Primary text
-     --dark-grey:   #4D4D4D   Labels / secondary text
-     --grey:        #818386   De-emphasised text
-     --light-grey:  #C8C9CA   Dividers / subtle borders
-     --bg:          #EBEBEB   Page background
-     --surface:     #F5F5F5   Card / panel surface
-   ================================================================ */
-
-/* ── Custom properties ─────────────────────────────────────────── */
-:root {
-    --blue:         #0F5C83;
-    --blue-dark:    #0a3f5c;
-    --blue-light:   #d0e4ef;
-    --orange:       #d75426;
-    --orange-dark:  #a83e1c;
-    --green:        #898E3E;
-    --black:        #231F20;
-    --dark-grey:    #4D4D4D;
-    --grey:         #818386;
-    --light-grey:   #C8C9CA;
-    --bg:           #EBEBEB;
-    --surface:      #F5F5F5;
-
-    --radius:  6px;
-    --shadow:  0 2px 6px rgba(0, 0, 0, 0.10);
-    --border:  2px solid var(--blue);
-    --font:    'Segoe UI', Arial, sans-serif;
-}
-
-/* ── Base / reset ──────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; }
-
-body {
-    font-family: var(--font);
-    background-color: var(--bg);
-    color: var(--black);
-    margin: 0;
-    padding: 10px 14px;
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-h1, h2, h3, h4, h5, p { margin: 4px 0; }
-
-/* ================================================================
-   HEADER + FILTER BOX  (side-by-side at the top of every page)
-   ================================================================ */
-
-/* ── Main header panel ─────────────────────────────────────────── */
-#full-header {
+#full-header{
     display: inline-flex;
-    width: 69%;
-    min-height: 140px;
-    background-color: var(--surface);
-    border: var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    vertical-align: top;
-}
-
-/* Left side: year picker + page title + KPI numbers */
-#header-left {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
     width: 70%;
-    padding: 8px 14px;
-    border-right: 1px solid var(--light-grey);
+    background-color: #E5E5E5;
+    border: 2px solid #17BECF;
+    border-radius: 5px;
+    margin-bottom: 0px;
+    height: 140px;
+}
+ 
+#header-left{
+    display: inline-flex;
+    flex-direction: column;
+    width: 70%;
 }
 
-#header-row-1 {
+#header-row-1{
     display: flex;
     align-items: center;
-    gap: 12px;
 }
 
-#year-filter {
-    width: 160px;
-    flex-shrink: 0;
+#page-title{
+    font-size: 24px;
 }
 
-#page-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--blue);
-    margin: 0;
-    padding-left: 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+#page-title{
+    padding-left: 40px;
 }
 
-#header-row-2 {
-    display: flex;
+#year-filter{
+    width: 100%;
+    margin-left: 5px;
+}
+
+#header-row-2{
+    display: inline-flex;
     flex-direction: row;
-    gap: 24px;
-    padding: 2px 0;
+    justify-content: space-between;
+    width: 80%;
 }
 
-.stat-element {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+.header-stat-text{
+    display: inline-block;
 }
 
-.header-stat-text {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--dark-grey);
-    margin: 0;
-    white-space: nowrap;
+.header-number{
+    display: inline-block;
+    color: #17BECF;
+    margin-left: 10px;
+    font-size: 20px;
+    font-weight: bold;
 }
 
-.header-number {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--orange);
-    white-space: nowrap;
-}
-
-/* Right side: navigation buttons */
-#header-right {
+#header-right{
     display: grid;
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-rows: repeat(3, auto);
     grid-auto-flow: column;
     width: 30%;
-    padding: 8px;
-    gap: 5px;
-    align-content: stretch;
+    height: 80%;
+    margin-top: 14px;
+    margin-right: 5px;
 }
 
-.link-button {
-    padding: 5px 8px;
-    background-color: var(--blue);
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    font-family: var(--font);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: background-color 0.15s ease;
+.link-button{
+    margin: 2px;
+    padding: 2px;
+    background-color: #B7C9E2;
+    border-radius: 5px;
+    font-size: 17px;
 }
 
-.link-button:hover  { background-color: var(--blue-dark); }
-.link-button:active { background-color: var(--orange); }
+.link-button:hover {
+  background-color: darkgray; 
+  cursor: pointer; 
+}
 
-/* ── Active-filter box ─────────────────────────────────────────── */
-#filter-box {
+
+#filter-box{
     position: absolute;
     display: inline-block;
     width: 29%;
-    min-height: 52px;
-    max-height: 140px;
-    background-color: var(--surface);
-    border: var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    margin-left: 8px;
-    padding: 8px 10px;
-    overflow-y: auto;
-    vertical-align: top;
+    background-color: #E5E5E5;
+    border: 2px solid #17BECF;
+    border-radius: 5px;
+    height: 140px;
+    margin-left: 5px;
+    overflow-y: scroll;
 }
 
-#filter-title {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--blue);
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    margin: 0 0 6px 0;
-}
-
-#active-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-/* Filter pill */
-#filter-buttons {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 3px 5px 3px 10px;
-    background-color: var(--blue-light);
-    border: 1px solid var(--blue);
-    border-radius: 14px;
-    font-size: 12px;
-    color: var(--black);
-    white-space: nowrap;
-}
-
-#filter-buttons button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    background-color: var(--orange);
-    color: #ffffff;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 10px;
-    font-weight: 700;
+#filter-title{
     padding: 0;
-    line-height: 1;
-    flex-shrink: 0;
-    transition: background-color 0.15s ease;
+    margin: 0;    
 }
 
-#filter-buttons button:hover { background-color: var(--orange-dark); }
+#filter-buttons{
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-right: 8px;
+    display: flex;
+    background-color: #eee;
+    justify-content: space-between;
+    align-items: center
+}
 
-/* ================================================================
-   SHARED GRAPH / LAYOUT UTILITIES
-   ================================================================ */
-.graph-flex {
+.graph-flex{
+    margin-top: 10px;
+    margin-bottom: 10px;
     display: flex;
     width: 100%;
     gap: 10px;
+    margin-left: 0px;
     align-items: stretch;
-    margin-top: 14px;
-    margin-bottom: 4px;
 }
 
-.graph {
+.graph{
+    outline: 2px solid #17BECF;
     flex: 1;
+    border-radius: 5px;
+    background-color: #E5E5E5;
+    padding: 2px;
     min-width: 0;
     height: 500px;
-    background-color: var(--surface);
-    border: var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 4px;
-    overflow: hidden;
 }
 
-.hr-line {
+#services-filters-div, #yty-filters-div{
+    background-color: #E5E5E5;
+    border: 2px solid #17BECF;
+    border-radius: 5px;
+    display: inline-block;
+    width: 250px;  
+}
+
+#enrollment-by-district{
+    flex: 2.04;
+}
+
+#services-threshold-title, #yty-threshold-title{
+    display: inline-block;
+    font-weight: bold;
+    font-size: 20px;
+    margin-left: 5px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+#services-threshold-value, #yty-threshold-value{
+    display: inline-block;
+    color: #17BECF;
+    font-weight: bold;
+    font-size: 20px;
+    margin-left: 5px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+#services-time-slider, #yty-time-slider{
+    margin-top: 0px;
+    padding-top: 0px;
+}
+
+.hr-line{
     width: 90%;
-    border: none;
-    border-top: 1px solid var(--light-grey);
-    margin: 10px auto;
+    border-top: 2px solid #17BECF;
 }
 
-/* ================================================================
-   DEMOGRAPHICS PAGE
-   ================================================================ */
-#enrollment-by-district { flex: 2.04; }
-
-/* ================================================================
-   SERVICES PAGE
-   ================================================================ */
-#services-filters-div,
-#yty-filters-div {
-    display: flex;
-    flex-direction: column;
-    width: 240px;
-    flex-shrink: 0;
-    height: 500px;
-    padding: 10px 12px;
-    background-color: var(--surface);
-    border: var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow-y: auto;
-}
-
-#services-threshold-title,
-#yty-threshold-title {
-    display: inline;
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--dark-grey);
-}
-
-#services-threshold-value,
-#yty-threshold-value {
-    display: inline;
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--orange);
-    margin-left: 4px;
-}
-
-#services-time-slider,
-#yty-time-slider {
-    margin-top: 6px;
-    padding-top: 0;
-}
-
-#services-checklist-div,
-#yty-checklist-div {
-    font-size: 13px;
-    overflow-y: auto;
-    flex: 1;
-    padding-right: 4px;
-    padding-top: 4px;
-}
-
-#yty-service-time-by-type { flex: 2; }
-
-/* ================================================================
-   OBJECTIVES PAGE
-   ================================================================ */
-#objectives-filters {
-    flex: 1;
-    height: 500px;
-    overflow-y: auto;
-    padding: 8px 10px;
-    background-color: var(--surface);
-    border: var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-}
-
-#gpa-radio-div {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    width: 100%;
-    margin: 8px 0;
-    font-weight: 600;
-}
-
-#gpa-slider-div,
-#gpa-benchmark-div {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin: 4px 0;
-}
-
-#gpa-ranges-title,
-#gpa-benchmark-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--dark-grey);
-    margin: 4px 2px;
-}
-
-#sankey-level-title {
-    text-align: center;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--blue);
-    margin: 10px 0 6px 0;
-    padding-top: 8px;
-    border-top: 1px solid var(--light-grey);
-}
-
-.sankey-level-flex {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-    padding: 3px 0;
-}
-
-.sankey-level-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--grey);
+#service-checklist-div, #yty-checklist-div{
+    font-size: 20px;
+    overflow-x: auto;
     white-space: nowrap;
-    min-width: 52px;
-    margin: 0;
 }
 
-.sankey-drop-down-div { flex: 1; min-width: 0; }
-.sankey-drop-down     { width: 100%; }
+#yty-service-time-by-type{
+    flex: 2;
+}
 
-#gpa-by-grade    { flex: 3; }
-#fafsa-completion{ flex: 1; }
-#alg1-by-grade   { flex: 2; }
-
-/* ================================================================
-   OBJECTIVES YTY PAGE
-   ================================================================ */
-#average-gpa-by-year { flex: 3; }
-
-#yty-gpa-radio-div {
+#gpa-radio-div{
     display: flex;
     justify-content: center;
-    gap: 16px;
     width: 100%;
-    margin: 6px 0;
-    font-weight: 600;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
-#objectives-yty-options-parent-div {
+#gpa-slider-div, #gpa-benchmark-div{
+    display: inline-flex;
+    width: 100%;
+}
+
+#gpa-ranges-title, #gpa-benchmark-title{
+    text-align: left;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-left: 4px;
+    font-size: 15px;
+}
+
+#sankey-level-title{
+    text-align: center;
+    margin: 3px;
+}
+
+.sankey-level-flex{
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+    padding: 2px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.sankey-drop-down{
+    width: 100%;
+    margin: 0px;
+}
+
+.sankey-drop-down-div{
+    width: 100%;
+    margin-right: 5px;
+}
+
+.sankey-level-label{
+    margin: 0px;
+    font-weight: bold;
+    white-space: nowrap;
+    margin-right: 10px;
+}
+
+#gpa-by-grade{
+    flex: 3;
+}
+
+#fafsa-completion{
+    flex: 1;
+}
+
+#fafsa-no-seniors-text{
+    font-size: 50px;
+    text-align: center;
+}
+
+#alg1-by-grade{
+    flex: 2;
+}
+
+#average-gpa-by-year{
+    flex: 3;
+}
+
+#yty-gpa-radio-div{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#objectives-yty-options-parent-div{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
     overflow-y: auto;
-    padding: 6px;
-    align-content: start;
-    height: 100%;
 }
 
-.yty-option-div {
-    border: 2px solid var(--blue);
-    border-radius: var(--radius);
-    padding: 8px 10px;
-    background-color: var(--bg);
+.yty-option-div{
+    border: 2px solid green;
+    border-radius: 5px;
 }
 
-.yty-option-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--blue);
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin: 2px 0 6px 0;
-    padding-bottom: 4px;
-    border-bottom: 1px solid var(--light-grey);
-}
-
-.yty-benchmark-div,
-.yty-increase-div,
-.yty-benchmark-year-div {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+.yty-benchmark-div, .yty-increase-div, .yty-benchmark-year-div{
     width: 100%;
-    margin: 3px 0;
+    align-items: center;
+    margin-top: 0px;
+    margin-bottom: 3px;
 }
 
-.options-text {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--dark-grey);
-    margin: 0;
-    white-space: nowrap;
-    min-width: 100px;
+.options-input, .options-text{
+    margin-top: 0px;
+    margin-bottom: 0px;
 }
 
-.options-input {
-    flex: 1;
-    min-width: 0;
-    margin: 0;
-    font-size: 13px;
+.options-text{
+    font-size: 14px;
 }
 
-/* ================================================================
-   COMPARE PAGE
-   ================================================================ */
-#compare-filters-div {
-    flex: 0.5 !important;
-    overflow-y: auto;
-    padding: 10px 12px;
-}
-
-#compare-service-time-range {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--dark-grey);
-    margin-top: 10px;
-    margin-bottom: 2px;
+#compare-filters-div{
+    flex: .5;
 }

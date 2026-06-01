@@ -1,45 +1,35 @@
-# "main.py"
-"""
-main.py
-Entry point for the CCREC Grant Level Dashboard.
-
-Usage
------
-  python main.py              # opens a folder-selection dialog
-  python main.py /path/to/data   # loads data directly from the given folder
-"""
-
 print('- Starting dashboard')
-print('- Look for a folder-selection window titled '
-      '"Please select source file folder"')
-print('- Please be patient — initial data load may take a minute or two.')
+print('- Look for a folder selection window with a title of \"Please select a source file folder\"')
+print('- Please be patient, it may take a minute or two ')
 
 import sys
-from dash import Dash
+from dash import Dash, html, dcc
 
 import data_loader
 import components
 from callbacks import register_callbacks
+import pickle
 
-# ── Load data ──────────────────────────────────────────────────────────────────
-data_frames = data_loader.load_data(sys.argv[1] if len(sys.argv) > 1 else 'default')
-
-if isinstance(data_frames, str):
+# Reading in data with data_loader.py and mapping codes
+if len(sys.argv) > 1:
+    data_frames = data_loader.load_data(sys.argv[1])
+else:
+    data_frames = data_loader.load_data('default')
+if type(data_frames) == str:
     print(data_frames)
-    sys.exit(1)
-
-AY_df                          = data_frames['ay_df']
-agg_services_df                = data_frames['agg_services_df']
+    sys.exit()
+AY_df = data_frames['ay_df']
+agg_services_df = data_frames['agg_services_df']
 duration_by_student_month_type = data_frames['duration_by_student_month_type']
-college_visits                 = data_frames['college_visits']
+college_visits = data_frames['college_visits']
 
-# ── Initialise Dash app ────────────────────────────────────────────────────────
+# Setting up Dash app
 app = Dash(__name__, suppress_callback_exceptions=True)
-app.title = 'CCREC Dashboard'
+app.title = 'Dashboard'
 
 app.layout = components.get_layout(AY_df['High School AY'].unique())
 register_callbacks(app, AY_df, agg_services_df, duration_by_student_month_type, college_visits)
 
-# ── Run ────────────────────────────────────────────────────────────────────────
-if __name__ == '__main__':
+# Running Dash app
+if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)
