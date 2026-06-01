@@ -236,6 +236,9 @@ body {
 
 /* === SIDEBAR FILTERS === */
 .sidebar-filters {
+    background-color: #FFFFFF;
+    border: 1px solid #D9DADB;
+    border-radius: 6px;
     min-width: 230px;
     max-width: 260px;
     padding: 12px;
