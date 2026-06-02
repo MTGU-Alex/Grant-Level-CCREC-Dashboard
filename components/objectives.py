@@ -36,7 +36,7 @@ def get_objectives_layout(
                     dcc.RangeSlider(0, 4, 0.1, value=[gpa_low, gpa_high], id='gpa-range-slider'),
                 ], className='control-group'),
                 html.Div([
-                    html.H4('GPA Benchmark:', className='control-label'),
+                    html.H4(f'GPA Benchmark: {gpa_benchmark}', className='filter-label'),
                     dcc.Slider(id='gpa-benchmark-slider', min=0, max=4, step=0.1, value=gpa_benchmark),
                 ], className='control-group'),
                 html.Hr(className='hr-line'),

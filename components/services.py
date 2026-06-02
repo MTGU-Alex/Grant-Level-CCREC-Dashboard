@@ -36,6 +36,7 @@ def get_services_layout(
                         options=service_types,
                         value=selected_types,
                         className='service-checklist',
+                        inline=False
                     ),
                 ], className='checklist-container'),
             ], id='services-filters-div', className='sidebar-filters'),

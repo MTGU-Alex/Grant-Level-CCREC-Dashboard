@@ -105,7 +105,7 @@ def get_gpa_by_grade(
         y=gpa_benchmark, line_dash="dash", line_width=2,
         line_color=Colors.BENCHMARK, secondary_y=True,
         annotation_text=f"Benchmark: {gpa_benchmark}",
-        annotation_position="top right",
+        annotation_position="bottom right",
     )
 
     return fig

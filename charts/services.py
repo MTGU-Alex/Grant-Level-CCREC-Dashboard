@@ -36,7 +36,7 @@ def get_participation_and_avg_time(ay: pd.DataFrame) -> Figure:
         rows=1, cols=3,
         shared_yaxes=True,
         column_widths=[0.45, 0.125, 0.45],
-        horizontal_spacing=0.02,
+        horizontal_spacing=0,
     )
 
     # Left bars (participation - negative for butterfly effect)
@@ -140,15 +140,32 @@ def get_participation_by_grade(
     combined = sort_by_grade(combined)
 
     return px.bar(
-        combined, x='Grade Level', y='Students', color='Group',
+        combined, x='Grade Level', y='Students', color='Group', custom_data='Group',
         barmode='group', text_auto=True,
         title='Service Participation by Grade',
+    ).update_layout(
+        legend_title_text="",
+        legend=dict(
+            yanchor='top',
+            y=1.15,
+            x=.7
+        ),
+        margin=dict(r=0)
+    ).update_traces(
+        hovertemplate='<br>'.join([
+            '<b>Grade Level:</b> %{x}',
+            '<b>Students:</b> %{y}',
+            '<b>Bar:</b> %{customdata}',
+            '<extra></extra>'
+        ])
     )
 
 
 @safe_chart("No service time data available")
 def get_service_time_by_grade(ay: pd.DataFrame) -> Figure:
     """Bar chart of average service time per student by grade."""
+    ay = ay.copy()
+    ay['Total Service Time'] = ay[SERVICE_COLUMNS].sum(axis=1)/60
     data = (
         ay.groupby('Grade Level')['Total Service Time']
         .mean()
@@ -162,4 +179,4 @@ def get_service_time_by_grade(ay: pd.DataFrame) -> Figure:
         data, x='Grade Level', y='Average Service Time',
         text=data['Average Service Time'],
         title='Average Service Time per Student by Grade (Hours)',
-    )
+    ).update_xaxes(type='category')

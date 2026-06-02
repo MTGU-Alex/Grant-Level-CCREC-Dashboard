@@ -21,7 +21,11 @@ def get_enrollment_by_district(ay: pd.DataFrame) -> Figure:
     return px.bar(
         data, x='District', y='Student Count',
         text_auto=True, title='Enrollment by District'
-    ).update_xaxes(title_text="")
+    ).update_xaxes(
+        title_text=""
+    ).update_layout(
+        margin=dict(b=110, r=50)
+    )
 
 
 @safe_chart("No enrollment data available")
@@ -53,6 +57,8 @@ def get_enrollment_by_grade(ay: pd.DataFrame) -> Figure:
     return px.bar(
         data, x='Grade Level', y='Enrollment Count',
         text_auto=True, title='Enrollment by Grade'
+    ).update_xaxes(
+        type='category'
     )
 
 
@@ -69,4 +75,7 @@ def get_enrollment_by_race(ay: pd.DataFrame) -> Figure:
         data, y='Race Code', x='Enrollment Count',
         labels={'Race Code': 'Race'},
         text_auto=True, title='Enrollment by Race'
+    ).update_layout(
+        margin=dict(l=190),
+        yaxis_title=None
     )

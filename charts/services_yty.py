@@ -103,6 +103,7 @@ def get_participation_by_month(
     return px.line(
         merged, x='Month', y='Participation Percent', color='High School AY',
         markers=True, title='Service Participation Percentage by Month',
+        category_orders={'High School AY': sorted(merged['High School AY'].drop_duplicates().to_list())},
     )
 
 
@@ -141,4 +142,5 @@ def get_hours_per_student_by_month(
     return px.line(
         merged, x='Month', y='Hours per Student', color='High School AY',
         markers=True, title='Average Service Hours per Student by Month',
+        category_orders={'High School AY': sorted(merged['High School AY'].drop_duplicates().to_list())}
     )

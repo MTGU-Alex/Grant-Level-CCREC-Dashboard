@@ -63,7 +63,7 @@ class Colors:
     WHITE = '#FFFFFF'
 
     # Chart-specific
-    BENCHMARK = '#0F5C83'
+    BENCHMARK = '#3A3A3C'
     PLOT_BG = '#F7F8F9'
 
     # Accent colors for extended palettes

@@ -60,14 +60,15 @@ def _get_participation_ranges(
 
 def _get_formatting(groups: int) -> tuple:
     """Get formatting parameters for double-stacked bar chart labels."""
+    #breaks, nudges, prespaces, standoff
     configs = {
-        1: (10, 35, 2, -105),
-        2: (5, 9, 9, -50),
-        3: (4, 7, 7, -42),
-        4: (2, 3, 4, -25),
-        5: (2, 3, 4, -25),
+        1: (12, 35, 22, -130),
+        2: (6, 9, 18, -65),
+        3: (4, 7, 12, -47),
+        4: (3, 3, 11, -35),
+        5: (2, 3, 6, -25),
     }
-    return configs.get(groups, (1, 0, 4, -15))
+    return configs.get(groups, (2, 0, 9, -23))
 
 
 @safe_chart("No participation data available")
@@ -103,8 +104,14 @@ def get_service_participation_compare(
                 showlegend=(group_idx == 0),
                 marker_color=color_map[col],
                 name=col,
-                text=df[col].apply(lambda v: f'{v}%' if v > 0 else ''),
-                hovertemplate=f'{group_name} | {col}<br>Grade: %{{x}}<br>%{{y}}%<extra></extra>',
+                text=df[col].astype('str')+'%',
+                customdata=df['Grade Level'],
+                hovertemplate=(
+                    f'Participation level: {col} hours<br>' +
+                    'Grade Level: %{customdata}<br>' + 
+                    'Percent of Students: %{y}%' +
+                    '<extra></extra>'
+                )
             ))
 
     breaks, nudges, prespaces, standoff = _get_formatting(len(district_grades))
@@ -113,15 +120,17 @@ def get_service_participation_compare(
         barmode='stack',
         title='Service Participation: Program vs District',
         bargroupgap=0.05,
+        legend=dict(tracegroupgap=0),
         xaxis=dict(
             tickvals=district_grades,
             ticktext=[
-                f'{"&nbsp;" * nudges}{" " * prespaces}{g} - district{"<br>" * breaks}{g} - program'
+                f'{"&nbsp;" * nudges}{" " * prespaces}{g}th - district{"<br>" * breaks}{g}th - program'
                 for g in district_grades
             ],
             tickangle=45,
             ticklabelstandoff=standoff,
         ),
+        margin=dict(b=75)
     )
 
     return fig
@@ -145,6 +154,8 @@ def get_gpa_compare(ay: pd.DataFrame, district_ay: pd.DataFrame, gpa_type: str) 
         combined, x='Grade Level', y='Average GPA', color='Group',
         barmode='group', text_auto=True,
         title=f'Average GPA by Grade ({gpa_type})',
+    ).update_layout(
+        legend_title_text=""
     )
 
 
@@ -166,6 +177,12 @@ def get_fafsa_compare(ay: pd.DataFrame, district_ay: pd.DataFrame) -> Figure:
     return px.bar(
         combined, x='Group', y='Percent', color='FAFSA status code',
         barmode='stack', text_auto=True, title='FAFSA Completion Comparison',
+        category_orders={
+            'FAFSA status code': ['FAFSA Completed', 'FAFSA Not Completed', 'Not Collected']
+        },
+    ).update_layout(
+        legend_title_text="",
+        xaxis_title=None
     ).update_traces(texttemplate='%{y}%')
 
 
@@ -178,7 +195,13 @@ def get_graduation_compare(ay: pd.DataFrame, district_ay: pd.DataFrame) -> Figur
     ])
     return px.bar(
         combined, x='Group', y='Percent', color='HS Grad Status code',
-        barmode='stack', text_auto=True, title='Graduation Status Comparison',
+        barmode='stack', text_auto=True, title='High School Graduation Status Comparison',
+        category_orders={
+            'HS Grad Status code': ['Graduated', 'Did Not Graduate', 'Graduation Status Unknown', 'N/A']
+        },
+    ).update_layout(
+        legend_title_text="",
+        xaxis_title=None
     ).update_traces(texttemplate='%{y}%')
 
 
@@ -202,4 +225,10 @@ def get_pse_compare(ay: pd.DataFrame, district_ay: pd.DataFrame) -> Figure:
     return px.bar(
         combined, x='Group', y='Percent', color='PSE',
         barmode='stack', text_auto=True, title='Post-Secondary Enrollment Comparison',
+        category_orders={
+            'PSE': ['Enrolled', 'Did Not Enroll']
+        },
+    ).update_layout(
+        legend_title_text="",
+        xaxis_title=None
     ).update_traces(texttemplate='%{y}%')
