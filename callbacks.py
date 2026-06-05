@@ -122,19 +122,18 @@ def _render_objectives(
     gpa_low = gpa_range[0] if gpa_range else 2.0
     gpa_high = gpa_range[1] if gpa_range else 3.0
     gpa_benchmark = gpa_benchmark if gpa_benchmark is not None else 2.5
-    l1 = l1 or 'FAFSA status code'
+    l1 = l1 or 'GPA'
 
     gpa_fig = charts.get_gpa_by_grade(filtered_ay, gpa_type, gpa_low, gpa_high, gpa_benchmark)
-    l1_opts, l1_sel, l2_opts, l2_sel, l3_opts, l3_sel, l4_opts, l4_sel, sankey_fig = (
-        charts.get_sankey(filtered_ay, l1, l2, l3, l4)
+    l1_opts, l1_sel, l2_opts, l2_sel, l3_opts, l3_sel, l4_opts, l4_sel, sankey_fig, return_message = (
+        charts.get_sankey(filtered_ay, l1, l2, l3, l4, gpa_type, gpa_low, gpa_high)
     )
 
     return components.get_objectives_layout(
         gpa_type, gpa_low, gpa_high, gpa_benchmark, gpa_fig,
         l1_opts, l1_sel, l2_opts, l2_sel, l3_opts, l3_sel, l4_opts, l4_sel,
-        sankey_fig,
+        sankey_fig, return_message
     )
-
 
 def _render_objectives_yty(
     filtered_ay: pd.DataFrame, years: list,
@@ -158,7 +157,6 @@ def _render_objectives_yty(
         charts.get_yty_graduation(filtered_ay, years, grad_bench, grad_inc, grad_year),
         charts.get_yty_pse(filtered_ay, years, pse_bench, pse_inc, pse_year),
     )
-
 
 def _render_compare(
     filtered_ay: pd.DataFrame,

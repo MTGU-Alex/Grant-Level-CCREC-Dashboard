@@ -233,6 +233,16 @@ body {
     flex: 3;
 }
 
+.graph-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 244px 244px; /* 244 + 12 gap + 244 = 500px total */
+    gap: 12px;
+    width: 100%;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
 /* === SIDEBAR FILTERS === */
 .sidebar-filters {
     background-color: #FFFFFF;
@@ -261,7 +271,7 @@ body {
     margin-bottom: 4px;
 }
 
-.filter-label {
+.filter-label, #sankey-return-message {
     font-size: 13px;
     font-weight: 600;
     color: #3A3A3C;

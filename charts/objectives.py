@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from plotly.graph_objects import Figure
 
-from constants import Colors, CHART_COLORWAY, SANKEY_LEVEL_OPTIONS
+from constants import Colors, CHART_COLORWAY, SANKEY_LEVEL_OPTIONS, SERVICE_COLUMNS
 from charts.common import safe_chart, sort_by_grade, get_empty_figure
 
 
@@ -104,8 +104,6 @@ def get_gpa_by_grade(
     fig.add_hline(
         y=gpa_benchmark, line_dash="dash", line_width=2,
         line_color=Colors.BENCHMARK, secondary_y=True,
-        annotation_text=f"Benchmark: {gpa_benchmark}",
-        annotation_position="bottom right",
     )
 
     return fig
@@ -139,6 +137,7 @@ def get_sankey(
     ay: pd.DataFrame,
     l1_selection: str, l2_selection: str,
     l3_selection: str, l4_selection: str,
+    gpa_type: str, gpa_low: float, gpa_high: float
 ) -> tuple:
     """
     Build a dynamic multi-level Sankey diagram for student outcome pathways.
@@ -150,9 +149,9 @@ def get_sankey(
          l3_options, l3_selection, l4_options, l4_selection, figure)
     """
     # Level 1 setup
-    l1_options = ['FAFSA status code', 'HS Grad Status code', 'Post Secondary Enrollment']
+    l1_options = ['GPA', 'District', 'Grade Level', 'Service Participation Level', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation']
     if not l1_selection:
-        l1_selection = 'FAFSA status code'
+        l1_selection = 'GPA'
 
     # Cascade level options
     options_dict = {
@@ -204,10 +203,47 @@ def get_sankey(
         (ay['First College Attended Name'].isna()) | (ay['First College Attended Name'].str.lower() == 'not found'),
         'Did Not Enroll', 'Enrolled'
     )
+
     ay['Post Secondary Graduation'] = np.where(
         (ay['Graduated Y/N'].isna()) | (ay['Graduated Y/N'].str.lower() == 'n'),
         'Has Not Graduated', 'Graduated'
     )
+
+    ay[gpa_type] = ay[gpa_type].fillna(9.99)
+    conditions = [
+        ay[gpa_type] <= gpa_low,
+        (ay[gpa_type] > gpa_low) & (ay[gpa_type] < gpa_high),
+        (ay[gpa_type] >= gpa_high) & (ay[gpa_type] < 9),
+    ]
+    choices = [
+        f'Low: ≤ {gpa_low}',
+        f'Medium: {gpa_low} - {gpa_high}',
+        f'High: ≥ {gpa_high}',
+    ]
+    ay['GPA'] = np.select(conditions, choices, default='Unknown')
+
+    ay['Service Hours'] = ay[SERVICE_COLUMNS].sum(axis=1) / 60
+    conditions = [
+        ay['Service Hours'] == 0,
+        (ay['Service Hours'] > 0) & (ay['Service Hours'] <= 1),
+        (ay['Service Hours'] > 1) & (ay['Service Hours'] <= 10),
+        ay['Service Hours'] > 10,
+    ]
+    choices = [
+        'No Participation',
+        f'Low Participation (≤ 1 hour)',
+        f'Medium Participation (1 - 10 hours)',
+        f'High Participation (> 10 hours)',
+    ]
+    ay['Service Participation Level'] = np.select(conditions, choices, default='Unknown')
+
+    return_message = None
+    if 'GPA' in selection_list:
+        return_message = '• Only grades 9-12 represented in sankey with the current levels.'
+        ay = ay[ay['Grade Level'].isin(['9', '10', '11', '12'])]
+    if 'FAFSA status code' in selection_list or 'HS Grad Status code' in selection_list or 'Post Secondary Enrollment' in selection_list or 'Post Secondary Graduation' in selection_list:
+        return_message = '• Only 12th graders represented in sankey with the current levels.'
+        ay = ay[ay['Grade Level'].isin(['12'])]
 
     # Build node list and metadata
     node_list = []
@@ -315,12 +351,11 @@ def get_sankey(
             showarrow=False, font=dict(size=12),
         )
 
-    fig.update_layout(title='Student Outcome Pathways')
 
     return (
         l1_options, l1_selection,
         options_dict.get('l2_options', []), options_dict['l2_selection'],
         options_dict.get('l3_options', []), options_dict['l3_selection'],
         options_dict.get('l4_options', []), options_dict['l4_selection'],
-        fig,
+        fig, return_message
     )

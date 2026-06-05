@@ -19,6 +19,7 @@ def get_objectives_layout(
     l4_options: list,
     l4_selection: str,
     sankey_fig: Figure,
+    return_message: str
 ) -> html.Div:
     """Build the objectives page layout."""
     return html.Div([
@@ -46,6 +47,7 @@ def get_objectives_layout(
                 _sankey_level_row('Level 2:', 'sankey-l2-dropdown', l2_options, l2_selection),
                 _sankey_level_row('Level 3:', 'sankey-l3-dropdown', l3_options, l3_selection),
                 _sankey_level_row('Level 4:', 'sankey-l4-dropdown', l4_options, l4_selection),
+                html.P(return_message, id='sankey-return-message')
             ], id='objectives-filters', className='graph sidebar-filters'),
             dcc.Graph(figure=gpa_by_grade, id='gpa-by-grade', className='graph graph-3x'),
         ], className='graph-flex'),
