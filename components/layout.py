@@ -3,6 +3,7 @@ Main application layout including the persistent header and filter box.
 """
 
 from dash import dcc, html
+import district_names
 
 
 def get_app_layout(years: list) -> html.Div:
@@ -22,6 +23,8 @@ def get_app_layout(years: list) -> html.Div:
         # State stores
         dcc.Store(id='current-page', data='demographics'),
         dcc.Store(id='filter-store', data={}),
+        dcc.Store(id='district-mappings-store', storage_type='memory', data=district_names.load_mappings()),
+        dcc.Store(id='district-pending-store', storage_type='memory', data=None),
 
         # Header
         html.Div([

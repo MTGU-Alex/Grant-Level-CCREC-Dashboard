@@ -18,6 +18,8 @@ from constants import (
     SERVICE_COLUMNS
 )
 
+import district_names
+
 
 def print_data_overview(ay_df: pd.DataFrame, agg_services: pd.DataFrame) -> None:
     """Print a summary table of data counts by year."""
@@ -358,6 +360,14 @@ def load_data(input_path: str) -> dict:
 
     # College visits
     college_visits = create_college_visits_df(ay_df)
+
+    # Report any saved district rename mappings found on disk
+    saved_mappings = district_names.load_mappings()
+    if saved_mappings:
+        print(f'- Found {len(saved_mappings)} saved district rename(s) '
+              f'(applied dynamically in the dashboard).')
+    else:
+        print('- No saved district renames found.')
 
     print('- Data load complete!')
     print_data_overview(ay_df, student_duration_by_month)

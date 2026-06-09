@@ -445,6 +445,254 @@ body {
     text-align: center;
 }
 
+/* === DISTRICT RENAME POPUP === */
+/* Full-screen semi-transparent backdrop */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+    display: flex;              /* toggled to 'flex' by JS callback */
+    align-items: center;
+    justify-content: center;
+}
+
+/* The white dialog box */
+.modal-dialog {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 6px 32px rgba(0, 0, 0, 0.22);
+    width: 800px;
+    max-width: 94vw;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ── Header ── */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+.modal-header h3 { margin: 0; font-size: 17px; }
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #777;
+    padding: 2px 8px;
+    border-radius: 4px;
+    line-height: 1;
+}
+.modal-close-btn:hover { background: #f0f0f0; color: #222; }
+
+.modal-instructions {
+    margin: 10px 20px 0;
+    color: #666;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+/* ── Add-group input row ── */
+.new-group-row {
+    display: flex;
+    gap: 8px;
+    padding: 10px 20px;
+    border-bottom: 1px solid #e8e8e8;
+    flex-shrink: 0;
+}
+.new-group-input {
+    flex: 1;
+    padding: 7px 11px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.new-group-input:focus { outline: 2px solid #4a90d9; border-color: transparent; }
+
+.add-group-btn {
+    padding: 7px 16px;
+    background: #4a90d9;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+}
+.add-group-btn:hover { background: #357abd; }
+
+/* ── Two-column body ── */
+.modal-columns {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    padding: 14px 20px;
+    gap: 18px;
+    min-height: 280px;
+}
+.modal-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+}
+.modal-column-header {
+    margin: 0 0 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* ── District pool (left column) ── */
+.district-pool {
+    flex: 1;
+    overflow-y: auto;
+    border: 2px dashed #ccc;
+    border-radius: 6px;
+    padding: 8px;
+    background: #fafafa;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-content: flex-start;
+}
+
+/* ── Groups container (right column, scrollable) ── */
+.groups-container {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ── Individual group card ── */
+.district-group {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    background: #eef3fb;
+    border-bottom: 1px solid #ddd;
+}
+.group-name-label { font-weight: 600; font-size: 13px; color: #2c3e6b; }
+
+.remove-group-btn {
+    background: none;
+    border: none;
+    color: #b00020;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    line-height: 1;
+}
+.remove-group-btn:hover { background: #ffe0e5; }
+
+/* ── Drop zones (shared by pool and groups) ── */
+.district-drop-zone {
+    padding: 8px;
+    min-height: 48px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-content: flex-start;
+    transition: background 0.15s;
+}
+.district-drop-zone.drag-over {
+    background: #ddeeff;
+    outline: 2px dashed #4a90d9;
+    outline-offset: -2px;
+}
+
+/* ── Draggable district chip ── */
+.district-drag-item {
+    padding: 4px 10px;
+    background: #fff;
+    border: 1px solid #c0c8d8;
+    border-radius: 4px;
+    cursor: grab;
+    font-size: 13px;
+    user-select: none;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: border-color 0.1s, box-shadow 0.1s;
+}
+.district-drag-item:hover {
+    border-color: #4a90d9;
+    box-shadow: 0 2px 6px rgba(74, 144, 217, 0.25);
+}
+.district-drag-item.dragging {
+    opacity: 0.35;
+    cursor: grabbing;
+}
+
+/* Drop-zone placeholder text */
+.drop-hint {
+    color: #c0c8d8;
+    font-style: italic;
+    font-size: 12px;
+    pointer-events: none;
+    user-select: none;
+    align-self: center;
+    width: 100%;
+    text-align: center;
+    padding: 2px 0;
+}
+/* Hide hint when the zone contains at least one district chip */
+.district-drag-item ~ .drop-hint { display: none; }
+
+/* ── Footer buttons ── */
+.modal-footer {
+    display: flex;
+    gap: 10px;
+    padding: 12px 20px;
+    border-top: 1px solid #e0e0e0;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.btn-primary   { padding: 8px 22px; background: #28a745; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+.btn-primary:hover  { background: #1e8736; }
+
+.btn-danger    { padding: 8px 22px; background: #dc3545; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+.btn-danger:hover   { background: #b52535; }
+
+.btn-secondary { padding: 8px 22px; background: #6c757d; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+.btn-secondary:hover { background: #545c62; }
+
+/* ── Sidebar trigger button ── */
+.rename-districts-btn {
+    width: 100%;
+    padding: 7px 10px;
+    background: #f4f6fb;
+    border: 1px solid #c8d0e0;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #3a4a6b;
+    text-align: left;
+    margin-top: 4px;
+}
+.rename-districts-btn:hover { background: #e6ecf8; border-color: #9aaad0; }
+
 /* === SCROLLBAR STYLING === */
 ::-webkit-scrollbar {
     width: 6px;
