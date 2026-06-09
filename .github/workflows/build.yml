@@ -36,7 +36,7 @@ jobs:
       - name: Build Mac executable
         if: runner.os == 'macOS'
         run: |
-          pyinstaller --add-data "assets/styles.css:assets" --add-data "assets/district_rename.js:assets" --add-data "locale_data.pkl:." --add-data "district_data.pkl:." --add-data "district_mappings.json;." --onefile main.py --name CCREC_dashboard_mac
+          pyinstaller --add-data "assets/styles.css:assets" --add-data "assets/district_rename.js:assets" --add-data "locale_data.pkl:." --add-data "district_data.pkl:." --add-data "district_mappings.json:." --onefile main.py --name CCREC_dashboard_mac
           chmod +x dist/CCREC_dashboard_mac
           codesign --force --deep --sign - dist/CCREC_dashboard_mac
           tar -czf dist/CCREC_dashboard_mac.tar.gz -C dist CCREC_dashboard_mac
