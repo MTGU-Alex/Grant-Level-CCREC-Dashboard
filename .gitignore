@@ -15,3 +15,4 @@ temp.py
 local_main.py
 local_main_opus.py
 raw_district_files/
+district_mappings.json
