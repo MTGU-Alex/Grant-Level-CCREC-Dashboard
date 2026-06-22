@@ -168,8 +168,8 @@ def _render_compare(
     if not current_district:
         return html.Div('No districts available with current filters.')
 
-    range_low  = range_slider[0] if range_slider else 5
-    range_high = range_slider[1] if range_slider else 10
+    range_low  = range_slider[0] if range_slider else 0
+    range_high = range_slider[1] if range_slider else 0
     objective  = objective or 'GPA'
     gpa_type   = gpa_type  or 'Cumulative GPA'
 

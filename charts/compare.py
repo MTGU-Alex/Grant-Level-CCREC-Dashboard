@@ -55,7 +55,12 @@ def _get_participation_ranges(
     counts['Percent'] = counts.groupby('Grade Level')['Count'].transform(
         lambda x: round(x / x.sum() * 100, 1)
     )
-    return counts.pivot(index='Grade Level', columns='Range', values='Percent').reset_index().fillna(0)
+    counts = counts.pivot(index='Grade Level', columns='Range', values='Percent').reset_index().fillna(0)
+    if high == 0 and low == 0:
+        counts.rename(columns={f'High: > {high}': 'Any Participation'}, inplace=True)
+    elif low == 0 and high != 0:
+        counts.rename(columns={f'Medium: {low} - {high}': f'Low: {low} - {high}'}, inplace=True)
+    return counts
 
 
 def _get_formatting(groups: int) -> tuple:
@@ -83,11 +88,13 @@ def get_service_participation_compare(
     district_grades = district['Grade Level'].tolist()
     program = program[program['Grade Level'].isin(district_grades)]
 
-    stack_cols = [f'Low: ≤ {low}', f'Medium: {low} - {high}', f'High: > {high}', 'No Participation']
+    stack_cols = [f'Low: ≤ {low}', f'Low: {low} - {high}', f'Medium: {low} - {high}', f'High: > {high}', 'Any Participation', 'No Participation']
     color_map = {
         f'Low: ≤ {low}': Colors.SECONDARY,
+        f'Low: {low} - {high}': Colors.SECONDARY,
         f'Medium: {low} - {high}': Colors.PRIMARY,
         f'High: > {high}': Colors.TERTIARY,
+        f'Any Participation': Colors.SECONDARY,
         'No Participation': Colors.LIGHT_GREY,
     }
 
