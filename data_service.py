@@ -147,3 +147,6 @@ class DashboardData:
             'total_students': total_students,
             'total_schools': total_schools,
         }
+    
+    def group_schools(self, group_dict: dict):
+        self._ay_df['School Display Name'] = self._ay_df['Secondary School Name'].map(group_dict).fillna(self._ay_df['Secondary School Name'])

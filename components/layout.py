@@ -6,7 +6,7 @@ from dash import dcc, html
 import district_names
 
 
-def get_app_layout(years: list) -> html.Div:
+def get_app_layout(years: list, renames: dict) -> html.Div:
     """
     Build the top-level application layout.
 
@@ -25,6 +25,7 @@ def get_app_layout(years: list) -> html.Div:
         dcc.Store(id='filter-store', data={}),
         dcc.Store(id='district-mappings-store', storage_type='memory', data=district_names.load_mappings()),
         dcc.Store(id='district-pending-store', storage_type='memory', data=None),
+        dcc.Store(id='school-renames', storage_type='memory', data=renames),
 
         # Header
         html.Div([

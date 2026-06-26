@@ -3,7 +3,7 @@ Callback registration for the CCREC Dashboard.
 Single orchestrator callback with modular handler functions.
 """
 
-from dash import Input, Output, State, html, dcc, ctx, ALL, no_update
+from dash import Input, Output, State, html, dcc, ctx, ALL, no_update, clientside_callback
 import pandas as pd
 
 import charts
@@ -32,8 +32,8 @@ def _handle_filter_update(trigger, filters: dict, click_data: dict) -> dict:
 
     if isinstance(trigger, dict) and trigger.get('type') == 'remove-filter-btn':
         filters.pop(trigger['key'], None)
-    elif trigger == 'enrollment-by-district' and click_data.get('district'):
-        filters['District'] = click_data['district']['points'][0]['x']
+    elif trigger == 'enrollment-by-school' and click_data.get('school'):
+        filters['School Display Name'] = click_data['school']['points'][0]['x']
     elif trigger == 'enrollment-by-gender' and click_data.get('gender'):
         filters['Gender Code'] = click_data['gender']['points'][0]['label']
     elif trigger == 'enrollment-by-ethnicity' and click_data.get('ethnicity'):
@@ -147,6 +147,7 @@ def _render_compare(
     all_original_districts: list,
     active_mappings: dict,
     current_district, range_slider, objective, gpa_type,
+    renames,
 ) -> html.Div:
     """Render the compare page.
 
@@ -159,7 +160,7 @@ def _render_compare(
     active_mappings : dict
         Current saved mappings – used to pre-populate modal groups.
     """
-    district_list = sorted(filtered_ay_mapped['District'].dropna().unique().tolist())
+    district_list = sorted(filtered_ay_mapped['School Display Name'].dropna().unique().tolist())
 
     # Reset selection if the previously chosen district was renamed/removed
     if not current_district or current_district not in district_list:
@@ -173,7 +174,7 @@ def _render_compare(
     objective  = objective or 'GPA'
     gpa_type   = gpa_type  or 'Cumulative GPA'
 
-    district_ay = filtered_ay_mapped[filtered_ay_mapped['District'] == current_district]
+    district_ay = filtered_ay_mapped[filtered_ay_mapped['School Display Name'] == current_district]
 
     district_pie  = charts.get_service_time_pie(district_ay,       f'Service Time: {current_district}')
     program_pie   = charts.get_service_time_pie(filtered_ay_mapped, 'Service Time: Program-Wide')
@@ -228,7 +229,8 @@ def _render_compare(
         objective, gpa_type,
         district_pie, program_pie, participation, obj_chart,
         all_original_districts,   
-        active_mappings,          
+        active_mappings,
+        renames,
     )
 
 
@@ -247,8 +249,19 @@ def register_callbacks(app, data: DashboardData):
             if (!ctx.triggered.length) return window.dash_clientside.no_update;
             const pid = ctx.triggered[0].prop_id;
             if (pid.includes('open-rename-modal-btn')) {
+                // Snapshot the drag-and-drop content area so we can restore on close
+                var cols = document.querySelector('#district-rename-modal .modal-columns');
+                if (cols) {
+                    window._modalColumnsSnapshot = cols.innerHTML;
+                }
                 return {display: 'flex'};
             }
+            // Closing without save — restore DOM to pre-interaction state
+            var cols = document.querySelector('#district-rename-modal .modal-columns');
+            if (cols && window._modalColumnsSnapshot) {
+                cols.innerHTML = window._modalColumnsSnapshot;
+            }
+            window._modalColumnsSnapshot = null;
             return {display: 'none'};
         }
         """,
@@ -293,6 +306,7 @@ def register_callbacks(app, data: DashboardData):
     # A single callback handles both Save and Reset to avoid the need
     # for allow_duplicate on the output store.
     # ------------------------------------------------------------------
+    '''
     @app.callback(
         Output('district-mappings-store', 'data'),
         Input('district-pending-store',      'data'),
@@ -322,7 +336,8 @@ def register_callbacks(app, data: DashboardData):
             return flat
 
         return no_update
-
+    '''
+        
     # ------------------------------------------------------------------
     # MAIN ORCHESTRATOR CALLBACK
     # ------------------------------------------------------------------
@@ -336,6 +351,7 @@ def register_callbacks(app, data: DashboardData):
             Output('current-page',         'data'),
             Output('active-filters',       'children'),
             Output('filter-store',         'data'),
+            Output('school-renames',       'data')
         ],
         [
             # Navigation & global
@@ -346,10 +362,10 @@ def register_callbacks(app, data: DashboardData):
             Input('objectives-btn',     'n_clicks'),
             Input('objectives-yty-btn', 'n_clicks'),
             Input('compare-btn',        'n_clicks'),
-            # ── NEW: district mappings – triggers re-render when saved/reset ──
+            # district mappings – triggers re-render when saved/reset 
             Input('district-mappings-store', 'data'),
             # Demographics chart clicks
-            Input('enrollment-by-district',  'clickData', allow_optional=True),
+            Input('enrollment-by-school',  'clickData', allow_optional=True),
             Input('enrollment-by-gender',    'clickData', allow_optional=True),
             Input('enrollment-by-ethnicity', 'clickData', allow_optional=True),
             Input('enrollment-by-grade',     'clickData', allow_optional=True),
@@ -366,6 +382,8 @@ def register_callbacks(app, data: DashboardData):
             Input('compare-service-ranges',     'value', allow_optional=True),
             Input('objective-compare-dropdown', 'value', allow_optional=True),
             Input('compare-gpa-radio',          'value', allow_optional=True),
+            Input('reset-district-rename-btn',  'n_clicks', allow_optional=True),
+            Input('district-pending-store',     'data'),
             # Objectives controls
             Input('gpa-radio',            'value', allow_optional=True),
             Input('gpa-range-slider',     'value', allow_optional=True),
@@ -392,6 +410,7 @@ def register_callbacks(app, data: DashboardData):
         [
             State('filter-store',   'data'),
             State('current-page',   'data'),
+            State('school-renames', 'data')
         ],
         suppress_callback_exceptions=True,
     )
@@ -399,11 +418,11 @@ def register_callbacks(app, data: DashboardData):
         selected_year,
         _demo_btn, _svc_btn, _svc_yty_btn, _obj_btn, _obj_yty_btn, _cmp_btn,
         district_mappings,                    
-        district_click, gender_click, ethnicity_click, grade_click, race_click,
+        school_click, gender_click, ethnicity_click, grade_click, race_click,
         remove_clicks,
         services_threshold, services_type_filter,
         yty_threshold, yty_type_filter,
-        current_district, compare_range, compare_objective, compare_gpa_type,
+        current_district, compare_range, compare_objective, compare_gpa_type, reset_schools, pending_districts_store,
         gpa_type, gpa_range, gpa_benchmark,
         sankey_l1, sankey_l2, sankey_l3, sankey_l4,
         yty_gpa_radio,
@@ -411,13 +430,13 @@ def register_callbacks(app, data: DashboardData):
         fafsa_bench, fafsa_inc, fafsa_year,
         grad_bench, grad_inc, grad_year,
         pse_bench, pse_inc, pse_year,
-        active_filters, current_page,
+        active_filters, current_page, renames
     ):
         trigger = ctx.triggered_id
 
         # ── Filters ──────────────────────────────────────────────────────
         click_data = {
-            'district':  district_click,
+            'school':  school_click,
             'gender':    gender_click,
             'ethnicity': ethnicity_click,
             'grade':     grade_click,
@@ -427,6 +446,21 @@ def register_callbacks(app, data: DashboardData):
 
         # ── Page ─────────────────────────────────────────────────────────
         page = _determine_page(trigger, current_page)
+
+        # ── Apply district renames ────────────────────────────────────────
+        if trigger == 'district-pending-store' and pending_districts_store:
+            flattened = {}
+            for group_name, districts in pending_districts_store.items():
+                for d in (districts or []):
+                    flattened[d] = group_name
+            active_mappings = flattened
+        elif trigger == 'reset-district-rename-btn':
+            active_mappings = {}
+        else:
+            active_mappings = renames
+
+        renames = active_mappings or {}
+        data.group_schools(renames)
 
         # ── Raw data (no district mapping applied yet) ───────────────────
         page_config = PAGE_CONFIG.get(page, {'uses_year': True})
@@ -438,35 +472,31 @@ def register_callbacks(app, data: DashboardData):
         else:
             filtered_ay_raw_page = filtered_ay_raw
 
-        # ── Apply district renames ────────────────────────────────────────
-        active_mappings  = district_mappings or {}
-        filtered_ay_page = district_names.apply_mappings(filtered_ay_raw_page, active_mappings)
-
         # ── Render ───────────────────────────────────────────────────────
         match page:
             case 'demographics':
-                contents = _render_demographics(filtered_ay_page)
+                contents = _render_demographics(filtered_ay_raw_page)
 
             case 'services':
                 contents = _render_services(
-                    filtered_ay_page, services_threshold, services_type_filter
+                    filtered_ay_raw_page, services_threshold, services_type_filter
                 )
 
             case 'services-yty':
                 duration_data = data.get_filtered_duration_by_student(filters)
                 contents = _render_services_yty(
-                    filtered_ay_page, duration_data, yty_threshold, yty_type_filter
+                    filtered_ay_raw_page, duration_data, yty_threshold, yty_type_filter
                 )
 
             case 'objectives':
                 contents = _render_objectives(
-                    filtered_ay_page, gpa_type, gpa_range, gpa_benchmark,
+                    filtered_ay_raw_page, gpa_type, gpa_range, gpa_benchmark,
                     sankey_l1, sankey_l2, sankey_l3, sankey_l4,
                 )
 
             case 'objectives-yty':
                 contents = _render_objectives_yty(
-                    filtered_ay_page, data.years,
+                    filtered_ay_raw_page, data.years,
                     yty_gpa_radio,
                     gpa_bench, gpa_inc, gpa_year,
                     fafsa_bench, fafsa_inc, fafsa_year,
@@ -477,17 +507,18 @@ def register_callbacks(app, data: DashboardData):
             case 'compare':
                 # Original (pre-mapping) district names for the rename modal
                 all_original = sorted(
-                    filtered_ay_raw_page['District'].dropna().unique().tolist()
+                    filtered_ay_raw_page['Secondary School Name'].dropna().unique().tolist()
                 )
                 contents = _render_compare(
-                    filtered_ay_page,
+                    filtered_ay_raw_page,
                     all_original,
                     active_mappings,
                     current_district, compare_range, compare_objective, compare_gpa_type,
+                    renames,
                 )
 
             case _:
-                contents = _render_demographics(filtered_ay_page)
+                contents = _render_demographics(filtered_ay_raw_page)
                 page = 'demographics'
 
         # ── Header stats ─────────────────────────────────────────────────
@@ -504,4 +535,6 @@ def register_callbacks(app, data: DashboardData):
             page,
             filter_tags,
             filters,
+            renames,
         )
+

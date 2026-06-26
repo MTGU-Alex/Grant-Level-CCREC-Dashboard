@@ -14,7 +14,7 @@ def get_demographics_layout(
     """Build the demographics page layout with all enrollment charts."""
     return html.Div([
         html.Div([
-            dcc.Graph(figure=enrollment_by_district, id='enrollment-by-district', className='graph graph-2x'),
+            dcc.Graph(figure=enrollment_by_district, id='enrollment-by-school', className='graph graph-2x'),
             dcc.Graph(figure=enrollment_by_gender, id='enrollment-by-gender', className='graph'),
             dcc.Graph(figure=enrollment_by_ethnicity, id='enrollment-by-ethnicity', className='graph'),
         ], className='graph-flex'),

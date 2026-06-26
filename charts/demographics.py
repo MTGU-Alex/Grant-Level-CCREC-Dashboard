@@ -11,16 +11,16 @@ from charts.common import safe_chart, sort_by_grade
 
 @safe_chart("No enrollment data available")
 def get_enrollment_by_district(ay: pd.DataFrame) -> Figure:
-    """Bar chart of enrollment counts by district."""
+    """Bar chart of enrollment counts by school/rename."""
     data = (
-        ay.groupby('District').size()
+        ay.groupby('School Display Name').size()
         .to_frame('Student Count')
         .reset_index()
         .sort_values('Student Count')
     )
     return px.bar(
-        data, x='District', y='Student Count',
-        text_auto=True, title='Enrollment by District'
+        data, x='School Display Name', y='Student Count',
+        text_auto=True, title='Enrollment by School/School Group'
     ).update_xaxes(
         title_text=""
     ).update_layout(

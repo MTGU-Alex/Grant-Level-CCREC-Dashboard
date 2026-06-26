@@ -117,6 +117,15 @@ def create_college_visits_df(ay_df: pd.DataFrame) -> pd.DataFrame:
     )
     return college_visits
 
+def _get_school_groups(ay_df: pd.DataFrame) -> dict:
+    '''Looks at ay_df and returns dict of any school groupings/renames.'''
+    rename_counts_by_school = ay_df.groupby(['Secondary School Name', 'School Group Name'], dropna=False).size().reset_index().rename(columns={0: 'Row Count'})
+    rename_counts_by_school.sort_values(by=['Secondary School Name', 'Row Count'], inplace=True, ascending=[True, False])
+    rename_counts_by_school.drop_duplicates(subset='Secondary School Name', keep='first', inplace=True)
+    rename_counts_by_school.dropna(subset='School Group Name', inplace=True)
+    rename_dict = rename_counts_by_school.set_index('Secondary School Name')['School Group Name'].to_dict()
+    return rename_dict
+
 
 def _get_data_path(filename: str) -> str:
     """Get path to bundled data file (supports PyInstaller)."""
@@ -361,13 +370,17 @@ def load_data(input_path: str) -> dict:
     # College visits
     college_visits = create_college_visits_df(ay_df)
 
-    # Report any saved district rename mappings found on disk
-    saved_mappings = district_names.load_mappings()
-    if saved_mappings:
-        print(f'- Found {len(saved_mappings)} saved district rename(s) '
-              f'(applied dynamically in the dashboard).')
+    # Check for any saved school grouping and setting school display name
+    if 'School Group Name' not in ay_df.columns:
+        ay_df['School Group Name'] = None
+    groups = _get_school_groups(ay_df)
+    if len(groups) == 0:
+        print('- No school rename/groupings found')
     else:
-        print('- No saved district renames found.')
+        print(f'- {len(groups)} schools with a rename/grouping found:')
+        print(tabulate(groups.items(), headers=['Original School Name', 'Rename/Group Name'], tablefmt='rounded_outline'))
+
+    ay_df['School Display Name'] = ay_df['Secondary School Name'].map(groups).fillna(ay_df['Secondary School Name'])
 
     print('- Data load complete!')
     print_data_overview(ay_df, student_duration_by_month)
@@ -377,4 +390,5 @@ def load_data(input_path: str) -> dict:
         'agg_services_df': aggregated_services,
         'duration_by_student_month_type': student_duration_by_month,
         'college_visits': college_visits,
+        'renames': groups
     }

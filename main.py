@@ -42,7 +42,7 @@ def create_app():
     app.title = 'CCREC Dashboard'
 
     # Set layout
-    app.layout = components.get_app_layout(data.years)
+    app.layout = components.get_app_layout(data.years, data_dict['renames'])
 
     # Register callbacks
     register_callbacks(app, data)

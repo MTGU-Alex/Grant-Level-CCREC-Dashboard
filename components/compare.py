@@ -3,6 +3,7 @@
 from dash import dcc, html
 from plotly.graph_objects import Figure
 
+import uuid
 
 # ── Modal helpers ─────────────────────────────────────────────────────────────
 
@@ -10,12 +11,8 @@ def _drag_item(district: str) -> html.Div:
     """Single draggable district card."""
     return html.Div(district, className='district-drag-item', draggable='true')
 
-
 def _group_zone(group_name: str, districts: list) -> html.Div:
     """Named group container with a drop zone pre-populated with *districts*."""
-    print(group_name)
-    print(districts)
-    print('----------------')
     items = [_drag_item(d) for d in sorted(districts)]
     items.append(html.Span('Drop districts here', className='drop-hint'))
     return html.Div([
@@ -26,21 +23,21 @@ def _group_zone(group_name: str, districts: list) -> html.Div:
         html.Div(items, className='district-drop-zone', **{'data-group': group_name}),
     ], className='district-group')
 
-
-def _build_rename_modal(all_districts: list, current_mappings: dict) -> html.Div:
+def _build_rename_modal(all_districts: list, current_mappings: dict, renames: dict) -> html.Div:
     """
     Build the district rename modal overlay.
-
-    Parameters
-    ----------
-    all_districts : list
-        Original (pre-mapping) district names.
-    current_mappings : dict
-        Saved GROUP format: ``{ group_name: [original_district_1, ...] }``
+    ...
     """
+    groups_and_districts = {}
+    for school, group in renames.items():
+        if group in groups_and_districts.keys():
+            groups_and_districts[group].append(school)
+        else:
+            groups_and_districts[group] = [school]
+
     # ─── Determine which districts are already assigned to a group ───
     assigned = set()
-    for group_name, district_list in current_mappings.items():
+    for group_name, district_list in groups_and_districts.items():
         for d in district_list:
             if d in all_districts:
                 assigned.add(d)
@@ -48,9 +45,8 @@ def _build_rename_modal(all_districts: list, current_mappings: dict) -> html.Div
     unassigned = [d for d in sorted(all_districts) if d not in assigned]
 
     # ─── Build group zones from the mapping ───
-    # Only include districts that actually exist in all_districts
     groups: dict[str, list] = {}
-    for group_name, district_list in current_mappings.items():
+    for group_name, district_list in groups_and_districts.items():
         valid_districts = [d for d in district_list if d in all_districts]
         if valid_districts:
             groups[group_name] = valid_districts
@@ -125,7 +121,15 @@ def _build_rename_modal(all_districts: list, current_mappings: dict) -> html.Div
             ], className='modal-footer'),
 
         ], className='modal-dialog'),
-    ], id='district-rename-modal', className='modal-overlay', style={'display': 'none'})
+    ],
+        id='district-rename-modal',
+        className='modal-overlay',
+        style={'display': 'none'},
+        # ⬇ Forces React to fully destroy and recreate this element on each
+        #   server re-render, preventing reconciliation issues caused by
+        #   direct DOM mutations from the drag-and-drop JavaScript.
+        key=str(uuid.uuid4()),
+    )
 
 
 # ── Public layout function ────────────────────────────────────────────────────
@@ -143,6 +147,7 @@ def get_compare_layout(
     objective_compare,
     all_original_districts: list,
     current_mappings: dict,
+    renames: dict,
 ) -> html.Div:
     """Build the compare page layout, including the district rename modal."""
 
@@ -165,7 +170,7 @@ def get_compare_layout(
     return html.Div([
         html.Div([
             html.Div([
-                html.H4('District:', className='control-label'),
+                html.H4('School/Group:', className='control-label'),
                 dcc.Dropdown(
                     id='district-dropdown',
                     options=[{'label': d, 'value': d} for d in sorted(district_list)],
@@ -199,5 +204,5 @@ def get_compare_layout(
             objective_content,
         ], className='graph-flex'),
         # ── Modal (always in DOM while on compare page; hidden by default) ──
-        _build_rename_modal(all_original_districts, current_mappings),
+        _build_rename_modal(all_original_districts, current_mappings, renames),
     ])

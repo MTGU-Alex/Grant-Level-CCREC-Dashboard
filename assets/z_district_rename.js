@@ -12,7 +12,7 @@
 (function () {
     'use strict';
 
-    var draggedItem = null;   // the .district-drag-item currently being dragged
+    var draggedItem = null;
 
     function setup() {
         if (window._districtRenameSetup) return;
@@ -25,7 +25,6 @@
             draggedItem = item;
             e.dataTransfer.effectAllowed = 'move';
             e.dataTransfer.setData('text/plain', item.textContent.trim());
-            // Defer so the browser snapshot is taken before opacity drops
             setTimeout(function () { item.classList.add('dragging'); }, 0);
         });
 
@@ -43,7 +42,6 @@
             var zone = e.target.closest('.district-drop-zone');
             if (!zone) return;
             e.preventDefault();
-            // Highlight only the zone currently under the cursor
             document.querySelectorAll('.district-drop-zone.drag-over').forEach(function (el) {
                 if (el !== zone) el.classList.remove('drag-over');
             });
@@ -53,7 +51,6 @@
         document.addEventListener('dragleave', function (e) {
             var zone = e.target.closest('.district-drop-zone');
             if (!zone) return;
-            // Only remove highlight when genuinely leaving (not entering a child)
             if (!zone.contains(e.relatedTarget)) {
                 zone.classList.remove('drag-over');
             }
@@ -63,6 +60,12 @@
             var zone = e.target.closest('.district-drop-zone');
             if (zone) zone.classList.remove('drag-over');
             if (!zone || !draggedItem) return;
+            // Guard: ensure the dragged item is still in the live document
+            // (it may have been detached by a React re-render)
+            if (!document.contains(draggedItem)) {
+                draggedItem = null;
+                return;
+            }
             e.preventDefault();
             zone.appendChild(draggedItem);
             draggedItem.classList.remove('dragging');
@@ -80,7 +83,6 @@
                 var name = input.value.trim();
                 if (!name) return;
 
-                // Prevent duplicate group names
                 var escapedName = name.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                 if (document.querySelector('.district-drop-zone[data-group="' + escapedName + '"]')) {
                     return;
@@ -120,7 +122,6 @@
         });
     }
 
-    /** Minimal HTML-entity escaping for user-supplied strings. */
     function _esc(str) {
         return String(str)
             .replace(/&/g,  '&amp;')
@@ -129,7 +130,6 @@
             .replace(/"/g,  '&quot;');
     }
 
-    // Run immediately (assets load after React mounts) + safety-net delay
     setup();
     setTimeout(setup, 300);
 })();

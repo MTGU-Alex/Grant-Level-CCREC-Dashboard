@@ -184,7 +184,7 @@ SANKEY_LEVEL_OPTIONS = {
 # == AY COLUMNS ======
 # ====================
 AY_COLUMNS_TO_KEEP = [
-    'High School AY', 'Program Model Code', 'School NCES ID',
+    'High School AY', 'Program Model Code', 'School NCES ID', 'Secondary School Name',
     'National CCREC Student ID', 'Student Type code', 'Gender Code',
     'Ethnicity Code', 'Race Code', 'Grade Level', 'Enrollment Status Code',
     'Service 1 Total', 'Service 2 Total', 'Service 3 Total',
@@ -195,7 +195,7 @@ AY_COLUMNS_TO_KEEP = [
     'Algebra 1- Grade of Completion', 'Final Term GPA', 'Cumulative GPA',
     'IPEDS numbers of the Schools Visited', 'First College Attended Name',
     'First College Attended IPEDS', 'Graduated Y/N', 'Degree Title',
-    'Dual Enrollment', 'Dual Enrollment Degree',
+    'Dual Enrollment', 'Dual Enrollment Degree', 'School Group Name',
 ]
 
 # Unknown NCES ID placeholder
