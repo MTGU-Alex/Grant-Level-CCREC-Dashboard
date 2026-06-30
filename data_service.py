@@ -118,7 +118,7 @@ class DashboardData:
             self._agg_services_df['High School AY'].isin(years)
         ].copy()
 
-    def get_header_stats(self, filters: dict, year: str) -> dict:
+    def get_header_stats(self, filters: dict, year: str, group: str) -> dict:
         """
         Compute header statistics for the filtered dataset.
 
@@ -135,6 +135,8 @@ class DashboardData:
             Keys: 'total_hours', 'total_students', 'total_schools'
         """
         df = self.get_filtered_ay(filters, year)
+        if group != 'All':
+            df = df[df['School Display Name'] == group]
         available_service_cols = [c for c in SERVICE_COLUMNS if c in df.columns]
         total_hours = round(df[available_service_cols].sum().sum() / 60, 2)
         total_students = len(df)
@@ -149,4 +151,5 @@ class DashboardData:
         }
     
     def group_schools(self, group_dict: dict):
-        self._ay_df['School Display Name'] = self._ay_df['Secondary School Name'].map(group_dict).fillna(self._ay_df['Secondary School Name'])
+        self._ay_df['School Group Name'] = self._ay_df['Secondary School Name'].map(group_dict)
+        self._ay_df['School Display Name'] = self._ay_df['School Group Name'].fillna(self._ay_df['Secondary School Name'])

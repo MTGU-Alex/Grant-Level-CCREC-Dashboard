@@ -5,8 +5,10 @@ from plotly.graph_objects import Figure
 
 import uuid
 
-# ── Modal helpers ─────────────────────────────────────────────────────────────
+# ── Button Icons ──────────────────────────────────────────────────────────────
+SAVE_ICON = "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='currentColor'><path d='M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H5V5h10v4z'/></svg>"
 
+# ── Grouping Modal helpers ────────────────────────────────────────────────────
 def _drag_item(district: str) -> html.Div:
     """Single draggable district card."""
     return html.Div(district, className='district-drag-item', draggable='true')
@@ -131,6 +133,51 @@ def _build_rename_modal(all_districts: list, current_mappings: dict, renames: di
         key=str(uuid.uuid4()),
     )
 
+# ── Save Groups Modal Components ──────────────────────────────────────────────
+def _build_save_modal(renames: dict) -> html.Div:
+    """
+    Build a save confirmation modal.
+
+    Parameters
+    ----------
+    reanmes : dict
+        school groupings to display in the modal body.
+
+    Returns
+    -------
+    html.Div
+    """
+    rows = [
+        html.Div([
+            html.Span(str(k), className='save-modal-key'),
+            html.Span('→', className='save-modal-arrow'),
+            html.Span(str(v), className='save-modal-value'),
+        ], className='save-modal-row')
+        for k, v in renames.items()
+    ]
+
+    return html.Div([
+        html.Div([
+
+            # Header
+            html.Div([
+                html.H3('Save Changes', className='save-modal-title'),
+            ], className='save-modal-header'),
+
+            # Body
+            html.Div([
+                html.P('The following will be saved:', className='save-modal-subtitle'),
+                html.Div(rows, className='save-modal-rows'),
+            ], className='save-modal-body'),
+
+            # Footer
+            html.Div([
+                html.Button('Cancel', id='save-modal-cancel-btn', className='save-modal-cancel-btn'),
+                html.Button('Save',   id='save-modal-save-btn',   className='save-modal-save-btn'),
+            ], className='save-modal-footer'),
+
+        ], className='save-modal-card'),
+    ], className='save-modal-overlay', id='save-modal-overlay', style={'display': 'none'})
 
 # ── Public layout function ────────────────────────────────────────────────────
 
@@ -169,6 +216,7 @@ def get_compare_layout(
 
     return html.Div([
         html.Div([
+            dcc.Download(id='ay-download'),
             html.Div([
                 html.H4('School/Group:', className='control-label'),
                 dcc.Dropdown(
@@ -190,8 +238,14 @@ def get_compare_layout(
                 html.Hr(className='hr-line'),
                 # ── Rename Districts button ──────────────────────────────
                 html.Button(
-                    '✏ Rename Districts',
+                    '-> Create School Groups',
                     id='open-rename-modal-btn',
+                    className='rename-districts-btn',
+                    n_clicks=0,
+                ),
+                html.Button(
+                    '-> Save Groupings',
+                    id='open-save-renames-modal-btn',
                     className='rename-districts-btn',
                     n_clicks=0,
                 ),
@@ -205,4 +259,5 @@ def get_compare_layout(
         ], className='graph-flex'),
         # ── Modal (always in DOM while on compare page; hidden by default) ──
         _build_rename_modal(all_original_districts, current_mappings, renames),
+        _build_save_modal(renames),
     ])

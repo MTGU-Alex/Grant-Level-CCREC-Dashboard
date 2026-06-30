@@ -35,6 +35,16 @@ body {
 }
 
 /* === HEADER === */
+#header-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
 #full-header {
     display: flex;
     width: 69%;
@@ -42,7 +52,6 @@ body {
     border: 1px solid #D9DADB;
     border-left: 4px solid #0F5C83;
     border-radius: 6px;
-    margin-bottom: 0;
     height: 140px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
@@ -80,7 +89,43 @@ body {
     display: flex;
     flex-direction: row;
     gap: 28px;
-    padding-bottom: 10px;
+    justify-content: center;
+    width: fit-content;        
+    align-self: center;        
+    padding: 4px 12px;         
+}
+
+#header-dropdowns {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;                  /* breathing room between the two rows */
+}
+
+.dropdown-and-lable {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+}
+
+.dropdown-and-lable p {
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6E7072;
+    white-space: nowrap;
+    width: 90px;              
+    flex-shrink: 0;
+}
+
+#year-filter,
+#group-dropdown {
+    width: 160px;
+    min-width: 160px;
+    flex-shrink: 0;
 }
 
 .stat-element {
@@ -143,11 +188,7 @@ body {
 
 /* === FILTER BOX === */
 #filter-box {
-    position: absolute;
-    display: inline-block;
     width: 30%;
-    right: 12px;
-    top: 12px;
     background-color: #FFFFFF;
     border: 1px solid #D9DADB;
     border-left: 4px solid #898E3E;
@@ -692,6 +733,147 @@ body {
     margin-top: 4px;
 }
 .rename-districts-btn:hover { background: #e6ecf8; border-color: #9aaad0; }
+
+/* === SAVE GROUPS POPUP === */
+.save-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.save-modal-card {
+    background-color: #FFFFFF;
+    border-radius: 6px;
+    border-left: 4px solid #0F5C83;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    width: 480px;
+    max-width: 90%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Header --- */
+.save-modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #D9DADB;
+}
+
+.save-modal-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #0F5C83;
+}
+
+/* --- Body --- */
+.save-modal-body {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+    min-height: 0;
+    flex: 1;
+}
+
+.save-modal-subtitle {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6E7072;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 0;
+}
+
+.save-modal-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.save-modal-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: #F0F1F2;
+    border: 1px solid #D9DADB;
+    border-radius: 4px;
+    font-size: 13px;
+    gap: 8px;
+}
+
+.save-modal-key {
+    font-weight: 600;
+    color: #231F20;
+    min-width: 120px;
+}
+
+.save-modal-arrow {
+    color: #6E7072;
+    font-weight: 400;
+}
+
+.save-modal-value {
+    color: #0F5C83;
+    font-weight: 500;
+}
+
+/* --- Footer --- */
+.save-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 20px;
+    border-top: 1px solid #D9DADB;
+}
+
+.save-modal-cancel-btn {
+    padding: 7px 16px;
+    background-color: #F0F1F2;
+    border: 1px solid #D9DADB;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #3A3A3C;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.save-modal-cancel-btn:hover {
+    background-color: #D9DADB;
+}
+
+.save-modal-save-btn {
+    padding: 7px 16px;
+    background-color: #2A9D5C;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.save-modal-save-btn:hover {
+    background-color: #218A4E;
+    box-shadow: 0 2px 4px rgba(42, 157, 92, 0.35);
+}
+
+.save-modal-save-btn:active,
+.save-modal-cancel-btn:active {
+    transform: scale(0.97);
+}
 
 /* === SCROLLBAR STYLING === */
 ::-webkit-scrollbar {

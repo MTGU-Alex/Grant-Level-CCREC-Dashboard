@@ -72,8 +72,9 @@ def _get_formatting(groups: int) -> tuple:
         3: (4, 7, 12, -47),
         4: (3, 3, 11, -35),
         5: (2, 3, 6, -25),
+        6: (2, 0, 9, -23),
     }
-    return configs.get(groups, (2, 0, 9, -23))
+    return configs.get(groups, (1, 0, 5, -15))
 
 
 @safe_chart("No participation data available")
@@ -125,19 +126,19 @@ def get_service_participation_compare(
 
     fig.update_layout(
         barmode='stack',
-        title='Service Participation: Program vs District',
+        title='Service Participation: Program vs School/Group',
         bargroupgap=0.05,
         legend=dict(tracegroupgap=0),
         xaxis=dict(
             tickvals=district_grades,
             ticktext=[
-                f'{"&nbsp;" * nudges}{" " * prespaces}{g}th - district{"<br>" * breaks}{g}th - program'
+                f'{"&nbsp;" * nudges}{" " * prespaces}{g}th - school/group{"<br>" * breaks}{g}th - program'
                 for g in district_grades
             ],
             tickangle=45,
             ticklabelstandoff=standoff,
         ),
-        margin=dict(b=75)
+        margin=dict(b=85)
     )
 
     return fig
@@ -155,7 +156,7 @@ def get_gpa_compare(ay: pd.DataFrame, district_ay: pd.DataFrame, gpa_type: str) 
         result['Group'] = label
         return result
 
-    combined = pd.concat([_avg_gpa(ay, 'Program'), _avg_gpa(district_ay, 'District')])
+    combined = pd.concat([_avg_gpa(ay, 'Program'), _avg_gpa(district_ay, 'School/Group')])
 
     return px.bar(
         combined, x='Grade Level', y='Average GPA', color='Group',
@@ -179,7 +180,7 @@ def get_fafsa_compare(ay: pd.DataFrame, district_ay: pd.DataFrame) -> Figure:
     """Stacked bar comparing FAFSA status: program vs district."""
     combined = pd.concat([
         _get_percent_by_group(ay, 'FAFSA status code', 'Program'),
-        _get_percent_by_group(district_ay, 'FAFSA status code', 'District'),
+        _get_percent_by_group(district_ay, 'FAFSA status code', 'School/Group'),
     ])
     return px.bar(
         combined, x='Group', y='Percent', color='FAFSA status code',
@@ -198,7 +199,7 @@ def get_graduation_compare(ay: pd.DataFrame, district_ay: pd.DataFrame) -> Figur
     """Stacked bar comparing graduation status: program vs district."""
     combined = pd.concat([
         _get_percent_by_group(ay, 'HS Grad Status code', 'Program'),
-        _get_percent_by_group(district_ay, 'HS Grad Status code', 'District'),
+        _get_percent_by_group(district_ay, 'HS Grad Status code', 'School/Group'),
     ])
     return px.bar(
         combined, x='Group', y='Percent', color='HS Grad Status code',
@@ -227,7 +228,7 @@ def get_pse_compare(ay: pd.DataFrame, district_ay: pd.DataFrame) -> Figure:
     )
     combined = pd.concat([
         _get_percent_by_group(ay, 'PSE', 'Program'),
-        _get_percent_by_group(district_ay, 'PSE', 'District'),
+        _get_percent_by_group(district_ay, 'PSE', 'School/Group'),
     ])
     return px.bar(
         combined, x='Group', y='Percent', color='PSE',

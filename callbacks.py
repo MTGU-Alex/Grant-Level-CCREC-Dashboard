@@ -11,6 +11,7 @@ import components
 import district_names
 from constants import SERVICE_COLUMNS, PAGE_CONFIG
 from data_service import DashboardData
+from datetime import date
 
 
 # ── Filter helpers ─────────────────────────────────────────────────────────────
@@ -32,8 +33,6 @@ def _handle_filter_update(trigger, filters: dict, click_data: dict) -> dict:
 
     if isinstance(trigger, dict) and trigger.get('type') == 'remove-filter-btn':
         filters.pop(trigger['key'], None)
-    elif trigger == 'enrollment-by-school' and click_data.get('school'):
-        filters['School Display Name'] = click_data['school']['points'][0]['x']
     elif trigger == 'enrollment-by-gender' and click_data.get('gender'):
         filters['Gender Code'] = click_data['gender']['points'][0]['label']
     elif trigger == 'enrollment-by-ethnicity' and click_data.get('ethnicity'):
@@ -233,7 +232,6 @@ def _render_compare(
         renames,
     )
 
-
 # ── Callback registration ───────────────────────────────────────────────────────
 
 def register_callbacks(app, data: DashboardData):
@@ -301,42 +299,45 @@ def register_callbacks(app, data: DashboardData):
         prevent_initial_call=True,
     )
 
-    # ------------------------------------------------------------------
-    # DISTRICT RENAME  ③  –  persist or reset mappings  (server-side)
-    # A single callback handles both Save and Reset to avoid the need
-    # for allow_duplicate on the output store.
-    # ------------------------------------------------------------------
-    '''
-    @app.callback(
-        Output('district-mappings-store', 'data'),
-        Input('district-pending-store',      'data'),
-        Input('reset-district-rename-btn',   'n_clicks', allow_optional=True),
-        prevent_initial_call=True,
+    app.clientside_callback(
+        """
+        function(openClicks, cancelClicks) {
+
+            const triggered = dash_clientside.callback_context.triggered[0];
+
+            if (!triggered) {
+                return {display: 'none'};
+            }
+
+            if (triggered.prop_id === 'open-save-renames-modal-btn.n_clicks') {
+                return {display: 'flex'};
+            }
+
+            if (triggered.prop_id === 'save-modal-cancel-btn.n_clicks') {
+                return {display: 'none'};
+            }
+
+            return {display: 'none'};
+        }
+        """,
+        Output('save-modal-overlay', 'style'),
+        Input('open-save-renames-modal-btn', 'n_clicks'),
+        Input('save-modal-cancel-btn', 'n_clicks'),
+        prevent_initial_call=True
     )
-    def _manage_district_mappings(pending_groups, reset_clicks):
-        """Save groups→districts mapping to disk or reset all mappings."""
-        trigger = ctx.triggered_id
 
-        if trigger == 'reset-district-rename-btn':
-            if not reset_clicks:
-                return no_update
-            district_names.reset_mappings()
-            return {}
-
-        if trigger == 'district-pending-store':
-            # pending_groups is None only on the very first (suppressed) call
-            if pending_groups is None:
-                return no_update
-            # Flatten { group: [districts] } → { district: group }
-            flat: dict = {}
-            for group_name, districts in pending_groups.items():
-                for d in (districts or []):
-                    flat[d] = group_name
-            district_names.save_mappings(flat)
-            return flat
-
-        return no_update
-    '''
+    # Callback for saving AY csv with renames
+    @app.callback(
+            Output('ay-download', 'data'),
+            Input('save-modal-save-btn', 'n_clicks'),
+            prevent_initial_call=True,
+    )
+    def download_ay(n_clicks):
+        return dcc.send_data_frame(
+            data._ay_df.copy().to_csv,
+            filename=f'AYData_{date.today().isoformat()}.csv',
+            index=False
+        )
         
     # ------------------------------------------------------------------
     # MAIN ORCHESTRATOR CALLBACK
@@ -351,21 +352,22 @@ def register_callbacks(app, data: DashboardData):
             Output('current-page',         'data'),
             Output('active-filters',       'children'),
             Output('filter-store',         'data'),
-            Output('school-renames',       'data')
+            Output('school-renames',       'data'),
+            Output('group-dropdown',       'options'),
         ],
         [
             # Navigation & global
-            Input('year-filter',        'value'),
-            Input('demographics-btn',   'n_clicks'),
-            Input('services-btn',       'n_clicks'),
-            Input('services-yty-btn',   'n_clicks'),
-            Input('objectives-btn',     'n_clicks'),
-            Input('objectives-yty-btn', 'n_clicks'),
-            Input('compare-btn',        'n_clicks'),
+            Input('year-filter',          'value'),
+            Input('group-dropdown',       'value'),
+            Input('demographics-btn',     'n_clicks'),
+            Input('services-btn',         'n_clicks'),
+            Input('services-yty-btn',     'n_clicks'),
+            Input('objectives-btn',       'n_clicks'),
+            Input('objectives-yty-btn',   'n_clicks'),
+            Input('compare-btn',          'n_clicks'),
             # district mappings – triggers re-render when saved/reset 
             Input('district-mappings-store', 'data'),
             # Demographics chart clicks
-            Input('enrollment-by-school',  'clickData', allow_optional=True),
             Input('enrollment-by-gender',    'clickData', allow_optional=True),
             Input('enrollment-by-ethnicity', 'clickData', allow_optional=True),
             Input('enrollment-by-grade',     'clickData', allow_optional=True),
@@ -415,10 +417,10 @@ def register_callbacks(app, data: DashboardData):
         suppress_callback_exceptions=True,
     )
     def update_page(
-        selected_year,
+        selected_year, selected_group,
         _demo_btn, _svc_btn, _svc_yty_btn, _obj_btn, _obj_yty_btn, _cmp_btn,
         district_mappings,                    
-        school_click, gender_click, ethnicity_click, grade_click, race_click,
+        gender_click, ethnicity_click, grade_click, race_click,
         remove_clicks,
         services_threshold, services_type_filter,
         yty_threshold, yty_type_filter,
@@ -436,7 +438,6 @@ def register_callbacks(app, data: DashboardData):
 
         # ── Filters ──────────────────────────────────────────────────────
         click_data = {
-            'school':  school_click,
             'gender':    gender_click,
             'ethnicity': ethnicity_click,
             'grade':     grade_click,
@@ -461,16 +462,21 @@ def register_callbacks(app, data: DashboardData):
 
         renames = active_mappings or {}
         data.group_schools(renames)
+        groups = ['All'] + sorted(data._ay_df['School Display Name'].drop_duplicates().to_list())
 
-        # ── Raw data (no district mapping applied yet) ───────────────────
+        # ── Raw data ─────────────────────────────────────────────────────
         page_config = PAGE_CONFIG.get(page, {'uses_year': True})
         filtered_ay_raw = data.get_filtered_ay(filters)
+        if selected_group != 'All':
+            filtered_ay_raw_group = filtered_ay_raw[filtered_ay_raw['School Display Name'] == selected_group]
+        else:
+            filtered_ay_raw_group = filtered_ay_raw
         if page_config['uses_year']:
-            filtered_ay_raw_page = filtered_ay_raw[
-                filtered_ay_raw['High School AY'] == selected_year
+            filtered_ay_raw_page = filtered_ay_raw_group[
+                filtered_ay_raw_group['High School AY'] == selected_year
             ]
         else:
-            filtered_ay_raw_page = filtered_ay_raw
+            filtered_ay_raw_page = filtered_ay_raw_group
 
         # ── Render ───────────────────────────────────────────────────────
         match page:
@@ -522,7 +528,7 @@ def register_callbacks(app, data: DashboardData):
                 page = 'demographics'
 
         # ── Header stats ─────────────────────────────────────────────────
-        stats      = data.get_header_stats(filters, selected_year)
+        stats      = data.get_header_stats(filters, selected_year, selected_group)
         page_title = f"CCREC Dashboard: {PAGE_CONFIG.get(page, {}).get('title', page)}"
         filter_tags = _build_filter_tags(filters)
 
@@ -536,5 +542,6 @@ def register_callbacks(app, data: DashboardData):
             filter_tags,
             filters,
             renames,
+            groups
         )
 
