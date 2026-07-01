@@ -24,6 +24,9 @@ from charts.services_yty import (
 from charts.objectives import (
     get_gpa_by_grade,
     get_fafsa,
+    get_graduation,
+    get_pse,
+    get_alg_1,
     get_sankey,
 )
 from charts.objectives_yty import (
@@ -32,6 +35,7 @@ from charts.objectives_yty import (
     get_yty_fafsa,
     get_yty_graduation,
     get_yty_pse,
+    get_yty_alg_1,
 )
 from charts.compare import (
     get_service_time_pie,

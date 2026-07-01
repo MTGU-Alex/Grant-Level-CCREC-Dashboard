@@ -220,8 +220,34 @@ def get_yty_pse(
 
     fig = px.bar(
         counts, x='High School AY', y='Percent', color='PSE Status',
-        barmode='stack', text_auto=True, title='Post-Secondary Enrollment by Year',
+        barmode='stack', text_auto=True, title='Post-Secondary Enrollment by Year (Graduates Only)',
         category_orders={'PSE Status': ['Enrolled', 'Did Not Enroll']},
+    ).update_traces(texttemplate='%{y}%').update_layout(legend_title_text=None)
+
+    if benchmark_val and increase_val and benchmark_year:
+        fig.add_trace(get_benchmark_line(years, benchmark_val, increase_val, benchmark_year, None))
+
+    return fig
+
+@safe_chart("No Algebra 1 data available")
+def get_yty_alg_1(
+    ay: pd.DataFrame, years: list,
+    benchmark_val, increase_val, benchmark_year
+) -> Figure:
+    alg_1_df = ay[ay['Grade Level'] == '9']
+
+    if len(alg_1_df) == 0:
+        return get_empty_figure("No 9th graders in data")
+    
+    counts = alg_1_df.groupby(['High School AY', 'Algebra 1 Status']).size().to_frame('Count').reset_index()
+    counts['Percent'] = counts.groupby('High School AY')['Count'].transform(
+        lambda x: round(x / x.sum() * 100, 1)
+    )
+
+    fig = px.bar(
+        counts, x='High School AY', y='Percent', color='Algebra 1 Status',
+        barmode='stack', text_auto=True, title='Algebra 1 Status (9th Graders Only)',
+        category_orders={'Algebra 1 Status': ['Enrolled and Completed', 'Enrolled But Not Completed', 'Not enrolled', 'N/A']},
     ).update_traces(texttemplate='%{y}%').update_layout(legend_title_text=None)
 
     if benchmark_val and increase_val and benchmark_year:

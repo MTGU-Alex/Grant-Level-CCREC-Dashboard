@@ -110,11 +110,15 @@ def _render_objectives(
     l1            = l1 or 'GPA'
 
     gpa_fig = charts.get_gpa_by_grade(filtered_ay, gpa_type, gpa_low, gpa_high, gpa_benchmark)
+    fafsa_fig = charts.get_fafsa(filtered_ay[filtered_ay['Grade Level'].isin(['12'])])
+    graduation_fig = charts.get_graduation(filtered_ay[filtered_ay['Grade Level'].isin(['12'])])
+    pse_fig = charts.get_pse(filtered_ay[filtered_ay['Grade Level'].isin(['12'])])
+    alg_1_fig = charts.get_alg_1(filtered_ay)
     l1_opts, l1_sel, l2_opts, l2_sel, l3_opts, l3_sel, l4_opts, l4_sel, sankey_fig, msg = (
         charts.get_sankey(filtered_ay, l1, l2, l3, l4, gpa_type, gpa_low, gpa_high)
     )
     return components.get_objectives_layout(
-        gpa_type, gpa_low, gpa_high, gpa_benchmark, gpa_fig,
+        gpa_type, gpa_low, gpa_high, gpa_benchmark, gpa_fig, fafsa_fig, graduation_fig, pse_fig, alg_1_fig,
         l1_opts, l1_sel, l2_opts, l2_sel, l3_opts, l3_sel, l4_opts, l4_sel,
         sankey_fig, msg,
     )
@@ -126,6 +130,7 @@ def _render_objectives_yty(
     fafsa_bench, fafsa_inc, fafsa_year,
     grad_bench, grad_inc, grad_year,
     pse_bench, pse_inc, pse_year,
+    alg_1_bench, alg_1_inc, alg_1_year,
 ) -> html.Div:
     return components.get_objectives_yty_layout(
         gpa_radio or 'Cumulative GPA',
@@ -133,11 +138,13 @@ def _render_objectives_yty(
         fafsa_bench, fafsa_inc, fafsa_year,
         grad_bench, grad_inc, grad_year,
         pse_bench, pse_inc, pse_year,
+        alg_1_bench, alg_1_inc, alg_1_year,
         years,
         charts.get_yty_gpa(filtered_ay, years, gpa_radio or 'Cumulative GPA', gpa_bench, gpa_inc, gpa_year),
         charts.get_yty_fafsa(filtered_ay, years, fafsa_bench, fafsa_inc, fafsa_year),
         charts.get_yty_graduation(filtered_ay, years, grad_bench, grad_inc, grad_year),
         charts.get_yty_pse(filtered_ay, years, pse_bench, pse_inc, pse_year),
+        charts.get_yty_alg_1(filtered_ay, years, alg_1_bench, alg_1_inc, alg_1_year)
     )
 
 
@@ -188,7 +195,7 @@ def _render_compare(
                 html.Div([html.H4('No GPA data for current selection')],
                          className='graph no-data-container')
                 if len(hs) == 0
-                else charts.get_gpa_compare(filtered_ay_mapped, district_ay, gpa_type)
+                else charts.get_gpa_compare(filtered_ay_mapped[filtered_ay_mapped[gpa_type] < 9], district_ay, gpa_type)
             )
         case 'FAFSA':
             seniors = district_ay[district_ay['Grade Level'] == '12']
@@ -408,6 +415,9 @@ def register_callbacks(app, data: DashboardData):
             Input('pse-yty-benchmark-input',        'value', allow_optional=True),
             Input('pse-yty-increase-input',         'value', allow_optional=True),
             Input('pse-yty-benchmark-year',         'value', allow_optional=True),
+            Input('alg-1-yty-benchmark-input',        'value', allow_optional=True),
+            Input('alg-1-yty-increase-input',         'value', allow_optional=True),
+            Input('alg-1-yty-benchmark-year',         'value', allow_optional=True),
         ],
         [
             State('filter-store',   'data'),
@@ -432,6 +442,7 @@ def register_callbacks(app, data: DashboardData):
         fafsa_bench, fafsa_inc, fafsa_year,
         grad_bench, grad_inc, grad_year,
         pse_bench, pse_inc, pse_year,
+        alg_1_bench, alg_1_inc, alg_1_year,
         active_filters, current_page, renames
     ):
         trigger = ctx.triggered_id
@@ -508,6 +519,7 @@ def register_callbacks(app, data: DashboardData):
                     fafsa_bench, fafsa_inc, fafsa_year,
                     grad_bench, grad_inc, grad_year,
                     pse_bench, pse_inc, pse_year,
+                    alg_1_bench, alg_1_inc, alg_1_year,
                 )
 
             case 'compare':

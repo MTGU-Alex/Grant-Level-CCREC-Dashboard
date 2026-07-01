@@ -10,11 +10,13 @@ def get_objectives_yty_layout(
     fafsa_benchmark, fafsa_increase, fafsa_year,
     graduation_benchmark, graduation_increase, graduation_year,
     pse_benchmark, pse_increase, pse_year,
+    alg_1_benchmark, alg_1_increase, alg_1_year,
     years: list,
     avg_gpa_fig: Figure,
     fafsa_fig: Figure,
     graduation_fig: Figure,
     pse_fig: Figure,
+    alg_1_fig: Figure,
 ) -> html.Div:
     """Build the objectives YTY page layout."""
     sorted_years = sorted(years)
@@ -59,6 +61,15 @@ def get_objectives_yty_layout(
             'benchmark': pse_benchmark,
             'increase': pse_increase,
             'year': pse_year or default_year,
+            'placeholder': 40,
+            'extra': None,
+        },
+        {
+            'id': 'alg-1-yty',
+            'title': 'Algebra 1',
+            'benchmark': alg_1_benchmark,
+            'increase': alg_1_increase,
+            'year': alg_1_year or default_year,
             'placeholder': 40,
             'extra': None,
         },
@@ -110,5 +121,6 @@ def get_objectives_yty_layout(
         ], className='graph-flex'),
         html.Div([
             dcc.Graph(figure=pse_fig, id='pse-by-year', className='graph'),
+            dcc.Graph(figure=alg_1_fig, id='alg-1-by-year', className='graph'),
         ], className='graph-flex'),
     ])

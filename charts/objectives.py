@@ -113,8 +113,6 @@ def get_gpa_by_grade(
 def get_fafsa(ay: pd.DataFrame):
     """Pie chart of FAFSA completion status for seniors."""
     seniors = ay[ay['Grade Level'].isin(['12'])]
-    if len(seniors) == 0:
-        return 'No Seniors'
 
     data = (
         seniors.groupby('FAFSA status code').size()
@@ -124,9 +122,59 @@ def get_fafsa(ay: pd.DataFrame):
     )
     return px.pie(
         data, names='FAFSA status code', values='Percent',
-        title='FAFSA Completion (Seniors)',
+        title='FAFSA Completion (OnlySeniors)',
     )
 
+@safe_chart('No graduation data available')
+def get_graduation(ay: pd.DataFrame) -> Figure:
+    seniors = ay[ay['Grade Level'].isin(['12'])] 
+
+    data = (
+        seniors.groupby('HS Grad Status code').size()
+        .transform(lambda x: round(x / x.sum() * 100, 1))
+        .to_frame('Percent')
+        .reset_index()
+    )
+    return px.pie(
+        data, names='HS Grad Status code', values='Percent',
+        title='High School Graduatiohn Code (Seniors Only)'
+    )
+
+@safe_chart('No graduation data available')
+def get_pse(ay: pd.DataFrame) -> Figure:
+    seniors = ay[ay['Grade Level'].isin(['12'])] 
+
+    seniors['PSE Status'] = np.where(
+        (seniors['First College Attended Name'].isna()) | (seniors['First College Attended Name'].str.lower() == 'not found'),
+        'Did Not Enroll', 'Enrolled'
+    )
+
+    data = (
+        seniors.groupby('PSE Status').size()
+        .transform(lambda x: round(x / x.sum() * 100, 1))
+        .to_frame('Percent')
+        .reset_index()
+    )
+    return px.pie(
+        data, names='PSE Status', values='Percent',
+        title='Post Seconsary Enrollment (Seniors Only)'
+    )
+
+@safe_chart('No Algebra 1 data available')
+def get_alg_1(ay: pd.DataFrame) -> Figure:
+    alg_df = ay.groupby(['Grade Level', 'Algebra 1 Status']).size().to_frame('Count').reset_index()
+    alg_df['Percentage'] = alg_df.groupby('Grade Level')['Count'].transform(
+        lambda x: round(x / x.sum() * 100, 1)
+    )
+
+    return px.bar(alg_df,
+        x='Grade Level',
+        y='Percentage',
+        color='Algebra 1 Status',
+        barmode='stack',
+        title='Algebra 1 Status',
+        text_auto=True
+    ).update_traces(texttemplate='%{y}%')
 
 def _get_next_sankey_level(level: str) -> list:
     """Get available options for the next sankey level."""

@@ -74,8 +74,8 @@ def get_app_layout(years: list, renames: dict, group_list: list) -> html.Div:
                     html.Button('Services', id='services-btn', n_clicks=0, className='link-button'),
                     html.Button('Services YTY', id='services-yty-btn', n_clicks=0, className='link-button'),
                     html.Button('Compare', id='compare-btn', n_clicks=0, className='link-button'),
-                    html.Button('Objectives', id='objectives-btn', n_clicks=0, className='link-button'),
-                    html.Button('Objectives YTY', id='objectives-yty-btn', n_clicks=0, className='link-button'),
+                    html.Button('Outcomes', id='objectives-btn', n_clicks=0, className='link-button'),
+                    html.Button('Outcomes YTY', id='objectives-yty-btn', n_clicks=0, className='link-button'),
                 ], id='header-right'),
             ], id='full-header'),
 

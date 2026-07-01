@@ -5,9 +5,6 @@ from plotly.graph_objects import Figure
 
 import uuid
 
-# ── Button Icons ──────────────────────────────────────────────────────────────
-SAVE_ICON = "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='currentColor'><path d='M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H5V5h10v4z'/></svg>"
-
 # ── Grouping Modal helpers ────────────────────────────────────────────────────
 def _drag_item(district: str) -> html.Div:
     """Single draggable district card."""
@@ -228,7 +225,7 @@ def get_compare_layout(
                 html.H4('Service Hour Ranges:', className='control-label'),
                 dcc.RangeSlider(0, 50, 1, value=[range_low, range_high], id='compare-service-ranges'),
                 html.Hr(className='hr-line'),
-                html.H4('Objective Comparison:', className='control-label'),
+                html.H4('Outcome Comparison:', className='control-label'),
                 dcc.Dropdown(
                     id='objective-compare-dropdown',
                     options=['GPA', 'FAFSA', 'Graduation', 'Post Secondary Enrollment'],
@@ -238,13 +235,13 @@ def get_compare_layout(
                 html.Hr(className='hr-line'),
                 # ── Rename Districts button ──────────────────────────────
                 html.Button(
-                    '-> Create School Groups',
+                    children=[html.Img(src="/assets/mdi-light--group.svg", style={"width": "20px", "marginRight": "8px"}), 'Create School Groups'],
                     id='open-rename-modal-btn',
                     className='rename-districts-btn',
                     n_clicks=0,
                 ),
                 html.Button(
-                    '-> Save Groupings',
+                    children=[html.Img(src="/assets/boxicons--save.svg", style={"width": "20px", "marginRight": "8px"}), 'Save Groupings'],
                     id='open-save-renames-modal-btn',
                     className='rename-districts-btn',
                     n_clicks=0,

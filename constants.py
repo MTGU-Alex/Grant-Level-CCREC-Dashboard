@@ -169,10 +169,10 @@ PAGE_CONFIG = {
 # == SANKEY LEVEL CONFIG ===
 # ==========================
 SANKEY_LEVEL_OPTIONS = {
-    'GPA': ['District', 'Grade Level', 'Service Participation Level', 'FAFSA status code', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
-    'District': ['GPA', 'Grade Level', 'Service Participation Level', 'FAFSA status code', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
-    'Grade Level': ['Service Participation Level', 'District', 'GPA', 'FAFSA status code', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
-    'Service Participation Level': ['Grade Level', 'District', 'GPA', 'FAFSA status code', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
+    'GPA': ['School Display Name', 'Grade Level', 'Service Participation Level', 'FAFSA status code', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
+    'School Display Name': ['GPA', 'Grade Level', 'Service Participation Level', 'FAFSA status code', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
+    'Grade Level': ['Service Participation Level', 'School Display Name', 'GPA', 'FAFSA status code', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
+    'Service Participation Level': ['Grade Level', 'School Display Name', 'GPA', 'FAFSA status code', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
     'FAFSA status code': ['HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
     'HS Grad Status code': ['Post Secondary Enrollment', 'Post Secondary Graduation'],
     'Post Secondary Enrollment': ['Post Secondary Graduation'],
