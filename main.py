@@ -42,13 +42,12 @@ def create_app():
     app.title = 'CCREC Dashboard'
 
     # Set layout
-    app.layout = components.get_app_layout(data.years, data_dict['renames'])
+    group_list = ['All'] + sorted(data_dict['ay_df']['School Display Name'].drop_duplicates().to_list())
+    app.layout = components.get_app_layout(data.years, data_dict['renames'], group_list)
 
     # Register callbacks
     register_callbacks(app, data)
-
     return app
-
 
 # Create and run
 app = create_app()
