@@ -6,6 +6,7 @@ Handles file selection, CSV reading, data cleaning, and enrichment.
 import tkinter as tk
 from tkinter import filedialog
 import pandas as pd
+import numpy as np
 from tabulate import tabulate
 import os
 import sys
@@ -96,7 +97,6 @@ def create_service_aggregation(service_df: pd.DataFrame) -> tuple:
 
     return aggregated_services, duration_by_student_month_type
 
-
 def create_college_visits_df(ay_df: pd.DataFrame) -> pd.DataFrame:
     """Extract and process college visit IPEDS data."""
     college_visits = ay_df[~ay_df['IPEDS numbers of the Schools Visited'].isna()][
@@ -114,7 +114,9 @@ def create_college_visits_df(ay_df: pd.DataFrame) -> pd.DataFrame:
         .groupby('National CCREC Student ID')['IPEDS numbers of the Schools Visited']
         .agg(list)
         .reset_index()
-    )
+    ).rename(columns={
+        'IPEDS numbers of the Schools Visited': 'Full IPEDs Visited List'
+    })
     return college_visits
 
 def _get_school_groups(ay_df: pd.DataFrame) -> dict:
@@ -346,8 +348,8 @@ def load_data(input_path: str) -> dict:
     ay_df.drop(columns='School NCES ID INT', inplace=True)
 
     # Enrich with locale and district
-    ay_df = _get_locale(ay_df)
-    ay_df = _get_district(ay_df)
+    #ay_df = _get_locale(ay_df)
+    #ay_df = _get_district(ay_df)
 
     # Fill NaN service columns and rename
     service_cols = [c for c in ay_df.columns if c.startswith('Service ') and 'Total' in c]
@@ -369,6 +371,35 @@ def load_data(input_path: str) -> dict:
 
     # College visits
     college_visits = create_college_visits_df(ay_df)
+    ay_df = ay_df.merge(college_visits, how='left', on='National CCREC Student ID')
+
+    ay_df['Went on College Visit'] = ~ay_df['Full IPEDs Visited List'].isna()
+    enrollment_null = ay_df['First College Attended IPEDS'].isna()
+    visits_and_enrollment_not_null = ay_df['Went on College Visit'] & ~enrollment_null
+
+    enrolled_was_visited = np.array([
+        v in l if isinstance(l, list) else False
+        for l,v in zip(ay_df['Full IPEDs Visited List'], ay_df['First College Attended IPEDS'])
+    ])
+
+    conditions = [
+        ~ay_df['Went on College Visit'] & enrollment_null,
+        ay_df['Went on College Visit'] & enrollment_null,
+        ~ay_df['Went on College Visit'] & ~enrollment_null,
+        visits_and_enrollment_not_null & enrolled_was_visited,
+        visits_and_enrollment_not_null & ~enrolled_was_visited
+    ]
+
+    choices = [
+        'Did not go on college visit, did not enroll in post secondary',
+        'Went on collete visit(s), did not enroll in post secondary',
+        'Did not go on college visit, enrolled in post secondary',
+        'Went on college visit(s), enrolled in post secondary at a visited school',
+        'Went on college visit(s), enrolled in post secondary at a NON visited school',
+    ]
+
+    ay_df['College Visits and PSE'] = np.select(conditions, choices, default='Check your conditions Alex...')
+    ay_df['Went on College Visit'] = ay_df['Went on College Visit'].map({True: 'Went on a college visit', False: 'Did not go on a college visit'})
 
     # Check for any saved school grouping and setting school display name
     if 'School Group Name' not in ay_df.columns:
@@ -392,3 +423,7 @@ def load_data(input_path: str) -> dict:
         'college_visits': college_visits,
         'renames': groups
     }
+
+
+if __name__ == '__main__':
+    pass

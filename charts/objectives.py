@@ -122,7 +122,7 @@ def get_fafsa(ay: pd.DataFrame):
     )
     return px.pie(
         data, names='FAFSA status code', values='Percent',
-        title='FAFSA Completion (OnlySeniors)',
+        title='FAFSA Completion (Seniors Only)',
     )
 
 @safe_chart('No graduation data available')
@@ -197,7 +197,7 @@ def get_sankey(
          l3_options, l3_selection, l4_options, l4_selection, figure)
     """
     # Level 1 setup
-    l1_options = ['GPA', 'District', 'Grade Level', 'Service Participation Level', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation']
+    l1_options = ['GPA', 'District', 'Grade Level', 'Service Participation Level', 'HS Grad Status code', 'Went on College Visit', 'Post Secondary Enrollment', 'College Visits and PSE', 'Post Secondary Graduation']
     if not l1_selection:
         l1_selection = 'GPA'
 
@@ -289,7 +289,7 @@ def get_sankey(
     if 'GPA' in selection_list:
         return_message = '• Only grades 9-12 represented in sankey with the current levels.'
         ay = ay[ay['Grade Level'].isin(['9', '10', '11', '12'])]
-    if 'FAFSA status code' in selection_list or 'HS Grad Status code' in selection_list or 'Post Secondary Enrollment' in selection_list or 'Post Secondary Graduation' in selection_list:
+    if 'FAFSA status code' in selection_list or 'HS Grad Status code' in selection_list or 'Post Secondary Enrollment' in selection_list or 'Post Secondary Graduation' in selection_list or 'College Visits and PSE' in selection_list:
         return_message = '• Only 12th graders represented in sankey with the current levels.'
         ay = ay[ay['Grade Level'].isin(['12'])]
 

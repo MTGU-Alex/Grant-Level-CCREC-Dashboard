@@ -61,15 +61,17 @@ locale_mapping = {
 full_df['LOCALE_NAME'] = full_df['LOCALE'].map(locale_mapping)
 full_df['LOCAL_CATEGORY'] = full_df['LOCALE_NAME'].str.split().str[0]
 
+print(full_df)
+
 # pickling final results
-full_df.to_pickle(current_dir+'\\locale_data.pkl')
+#full_df.to_pickle(current_dir+'\\locale_data.pkl')
 #'''
 
 # ===================
 # ===  DISTRICT =====
 # ===================
 
-#'''
+'''
 # Reading in district files (encoding latin-1 for SAS7BDAT style encoding)
 district_df = pd.DataFrame()
 for district_file in [district_dir+file_name for file_name in os.listdir(district_dir) if '_bkup' not in file_name]:
