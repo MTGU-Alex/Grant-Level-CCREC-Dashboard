@@ -79,7 +79,7 @@ def _render_services(filtered_ay: pd.DataFrame, threshold, service_filter) -> ht
         threshold, SERVICE_COLUMNS, service_filter,
         charts.get_participation_and_avg_time(filtered_ay),
         charts.get_participation_by_grade(filtered_ay, threshold, service_filter),
-        charts.get_service_time_by_grade(filtered_ay),
+        charts.get_service_time_by_grade(filtered_ay, service_filter),
     )
 
 
@@ -473,7 +473,7 @@ def register_callbacks(app, data: DashboardData):
 
         renames = active_mappings or {}
         data.group_schools(renames)
-        groups = ['All'] + sorted(data._ay_df['School Display Name'].drop_duplicates().to_list())
+        groups = ['All'] + sorted(data._ay_df['School Display Name'].drop_duplicates().to_list(), key=str.lower)
 
         # ── Raw data ─────────────────────────────────────────────────────
         page_config = PAGE_CONFIG.get(page, {'uses_year': True})
@@ -481,13 +481,13 @@ def register_callbacks(app, data: DashboardData):
         if selected_group != 'All':
             filtered_ay_raw_group = filtered_ay_raw[filtered_ay_raw['School Display Name'] == selected_group]
         else:
-            filtered_ay_raw_group = filtered_ay_raw
+            filtered_ay_raw_group = filtered_ay_raw.copy()
         if page_config['uses_year']:
             filtered_ay_raw_page = filtered_ay_raw_group[
                 filtered_ay_raw_group['High School AY'] == selected_year
             ]
         else:
-            filtered_ay_raw_page = filtered_ay_raw_group
+            filtered_ay_raw_page = filtered_ay_raw_group.copy()
 
         # ── Render ───────────────────────────────────────────────────────
         match page:
@@ -501,6 +501,8 @@ def register_callbacks(app, data: DashboardData):
 
             case 'services-yty':
                 duration_data = data.get_filtered_duration_by_student(filters)
+                if selected_group != 'All':
+                    duration_data = duration_data[duration_data['School Display Name'] == selected_group].copy()
                 contents = _render_services_yty(
                     filtered_ay_raw_page, duration_data, yty_threshold, yty_type_filter
                 )

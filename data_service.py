@@ -153,3 +153,5 @@ class DashboardData:
     def group_schools(self, group_dict: dict):
         self._ay_df['School Group Name'] = self._ay_df['Secondary School Name'].map(group_dict)
         self._ay_df['School Display Name'] = self._ay_df['School Group Name'].fillna(self._ay_df['Secondary School Name'])
+        self._duration_by_student_month_type['School Group Name'] = self._duration_by_student_month_type['Secondary School Name'].map(group_dict)
+        self._duration_by_student_month_type['School Display Name'] = self._duration_by_student_month_type['School Group Name'].fillna(self._duration_by_student_month_type['Secondary School Name'])

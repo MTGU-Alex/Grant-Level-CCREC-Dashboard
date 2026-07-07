@@ -162,10 +162,11 @@ def get_participation_by_grade(
 
 
 @safe_chart("No service time data available")
-def get_service_time_by_grade(ay: pd.DataFrame) -> Figure:
+def get_service_time_by_grade(ay: pd.DataFrame, service_types: list) -> Figure:
     """Bar chart of average service time per student by grade."""
+    available_types = [t for t in service_types if t in ay.columns]
     ay = ay.copy()
-    ay['Total Service Time'] = ay[SERVICE_COLUMNS].sum(axis=1)/60
+    ay['Total Service Time'] = ay[available_types].sum(axis=1)/60
     data = (
         ay.groupby('Grade Level')['Total Service Time']
         .mean()

@@ -12,7 +12,7 @@ def _drag_item(district: str) -> html.Div:
 
 def _group_zone(group_name: str, districts: list) -> html.Div:
     """Named group container with a drop zone pre-populated with *districts*."""
-    items = [_drag_item(d) for d in sorted(districts)]
+    items = [_drag_item(d) for d in sorted(districts, key=str.lower)]
     items.append(html.Span('Drop districts here', className='drop-hint'))
     return html.Div([
         html.Div([
@@ -41,7 +41,7 @@ def _build_rename_modal(all_districts: list, current_mappings: dict, renames: di
             if d in all_districts:
                 assigned.add(d)
 
-    unassigned = [d for d in sorted(all_districts) if d not in assigned]
+    unassigned = [d for d in sorted(all_districts, key=str.lower) if d not in assigned]
 
     # ─── Build group zones from the mapping ───
     groups: dict[str, list] = {}
@@ -218,7 +218,7 @@ def get_compare_layout(
                 html.H4('School/Group:', className='control-label'),
                 dcc.Dropdown(
                     id='district-dropdown',
-                    options=[{'label': d, 'value': d} for d in sorted(district_list)],
+                    options=[{'label': d, 'value': d} for d in sorted(district_list, key=str.lower)],
                     value=current_district, clearable=False,
                 ),
                 html.Hr(className='hr-line'),

@@ -21,7 +21,6 @@ from constants import (
 
 import district_names
 
-
 def print_data_overview(ay_df: pd.DataFrame, agg_services: pd.DataFrame) -> None:
     """Print a summary table of data counts by year."""
     students_per_year = ay_df.groupby('High School AY')['National CCREC Student ID'].nunique()
@@ -85,6 +84,7 @@ def create_service_aggregation(service_df: pd.DataFrame) -> tuple:
             service_df['Service Date'].dt.month,
             'Service Type Code',
             'National CCREC Student ID',
+            'Secondary School Name',
         ])['Service Time']
         .sum()
         .reset_index()

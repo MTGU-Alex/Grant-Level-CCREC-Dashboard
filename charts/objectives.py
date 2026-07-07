@@ -137,7 +137,7 @@ def get_graduation(ay: pd.DataFrame) -> Figure:
     )
     return px.pie(
         data, names='HS Grad Status code', values='Percent',
-        title='High School Graduatiohn Code (Seniors Only)'
+        title='High School Graduation Code (Seniors Only)'
     )
 
 @safe_chart('No graduation data available')
@@ -173,7 +173,14 @@ def get_alg_1(ay: pd.DataFrame) -> Figure:
         color='Algebra 1 Status',
         barmode='stack',
         title='Algebra 1 Status',
-        text_auto=True
+        text_auto=True,
+        category_orders={'Algebra 1 Status': ['Enrolled and Completed', 'Enrolled But Not Completed', 'Not enrolled', 'N/A']},
+        color_discrete_map={
+            'Enrolled and Completed': Colors.PRIMARY,
+            'Enrolled But Not Completed': Colors.SECONDARY,
+            'Not enrolled': Colors.TERTIARY,
+            'N/A': Colors.LIGHT_GREY
+        },
     ).update_traces(texttemplate='%{y}%')
 
 def _get_next_sankey_level(level: str) -> list:
@@ -197,7 +204,7 @@ def get_sankey(
          l3_options, l3_selection, l4_options, l4_selection, figure)
     """
     # Level 1 setup
-    l1_options = ['GPA', 'District', 'Grade Level', 'Service Participation Level', 'HS Grad Status code', 'Went on College Visit', 'Post Secondary Enrollment', 'College Visits and PSE', 'Post Secondary Graduation']
+    l1_options = ['GPA', 'School Display Name', 'Grade Level', 'Service Participation Level', 'HS Grad Status code', 'Went on College Visit', 'Post Secondary Enrollment', 'College Visits and PSE', 'Post Secondary Graduation']
     if not l1_selection:
         l1_selection = 'GPA'
 

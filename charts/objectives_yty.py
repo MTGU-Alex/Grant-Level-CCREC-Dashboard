@@ -158,7 +158,14 @@ def get_yty_fafsa(
 
     fig = px.bar(
         counts, x='High School AY', y='Percent', color='FAFSA status code',
-        barmode='stack', text_auto=True, title='FAFSA Completion by Year',
+        barmode='stack', text_auto=True, title='FAFSA Completion by Year (Seniors Only)',
+        category_orders={'FAFSA status code': ['FAFSA Completed', 'FAFSA Not Completed', 'Not Collected', 'N/A']},
+        color_discrete_map={
+            'N/A': Colors.LIGHT_GREY,
+            'Not Collected': Colors.LIGHT_GREY,
+            'FAFSA Not Completed': Colors.SECONDARY,
+            'FAFSA Completed': Colors.PRIMARY
+        },
     ).update_traces(texttemplate='%{y}%').update_layout(legend_title_text=None)
 
     if benchmark_val and increase_val and benchmark_year:
@@ -185,8 +192,14 @@ def get_yty_graduation(
 
     fig = px.bar(
         counts, x='High School AY', y='Percent', color='HS Grad Status code',
-        barmode='stack', text_auto=True, title='Graduation Status by Year',
+        barmode='stack', text_auto=True, title='Graduation Status by Year (Seniors Only)',
         category_orders={'HS Grad Status code': ['Graduated', 'Did Not Graduate', 'Graduation Status Unknown', 'N/A']},
+        color_discrete_map={
+            'Graduated': Colors.PRIMARY,
+            'Did Not Graduate': Colors.SECONDARY, 
+            'Graduation Status Unknown': Colors.TERTIARY, 
+            'N/A': Colors.LIGHT_GREY
+        },
     ).update_traces(texttemplate='%{y}%').update_layout(legend_title_text=None)
 
     if benchmark_val and increase_val and benchmark_year:
@@ -222,6 +235,10 @@ def get_yty_pse(
         counts, x='High School AY', y='Percent', color='PSE Status',
         barmode='stack', text_auto=True, title='Post-Secondary Enrollment by Year (Graduates Only)',
         category_orders={'PSE Status': ['Enrolled', 'Did Not Enroll']},
+        color_discrete_map={
+            'Enrolled': Colors.PRIMARY,
+            'Did Not Enroll': Colors.SECONDARY, 
+        },
     ).update_traces(texttemplate='%{y}%').update_layout(legend_title_text=None)
 
     if benchmark_val and increase_val and benchmark_year:
@@ -248,6 +265,12 @@ def get_yty_alg_1(
         counts, x='High School AY', y='Percent', color='Algebra 1 Status',
         barmode='stack', text_auto=True, title='Algebra 1 Status (9th Graders Only)',
         category_orders={'Algebra 1 Status': ['Enrolled and Completed', 'Enrolled But Not Completed', 'Not enrolled', 'N/A']},
+        color_discrete_map={
+            'Enrolled and Completed': Colors.PRIMARY,
+            'Enrolled But Not Completed': Colors.SECONDARY,
+            'Not enrolled': Colors.TERTIARY,
+            'N/A': Colors.LIGHT_GREY
+        },
     ).update_traces(texttemplate='%{y}%').update_layout(legend_title_text=None)
 
     if benchmark_val and increase_val and benchmark_year:
