@@ -160,8 +160,8 @@ PAGE_CONFIG = {
     'demographics': {'title': 'Demographics', 'uses_year': True},
     'services': {'title': 'Services', 'uses_year': True},
     'services-yty': {'title': 'Services YTY', 'uses_year': False},
-    'objectives': {'title': 'Objectives', 'uses_year': True},
-    'objectives-yty': {'title': 'Objectives YTY', 'uses_year': False},
+    'objectives': {'title': 'Outcomes', 'uses_year': True},
+    'objectives-yty': {'title': 'Outcomes YTY', 'uses_year': False},
     'compare': {'title': 'Compare', 'uses_year': True},
 }
 

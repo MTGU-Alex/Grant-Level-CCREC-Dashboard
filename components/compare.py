@@ -13,7 +13,7 @@ def _drag_item(district: str) -> html.Div:
 def _group_zone(group_name: str, districts: list) -> html.Div:
     """Named group container with a drop zone pre-populated with *districts*."""
     items = [_drag_item(d) for d in sorted(districts, key=str.lower)]
-    items.append(html.Span('Drop districts here', className='drop-hint'))
+    items.append(html.Span('Drop schools here', className='drop-hint'))
     return html.Div([
         html.Div([
             html.Span(group_name, className='group-name-label'),
@@ -52,7 +52,7 @@ def _build_rename_modal(all_districts: list, current_mappings: dict, renames: di
 
     # ─── Unassigned pool ───
     pool_items = [_drag_item(d) for d in unassigned]
-    pool_items.append(html.Span('Drop districts here', className='drop-hint'))
+    pool_items.append(html.Span('Drop schools here', className='drop-hint'))
 
     # ─── Group zones ───
     group_zones = [_group_zone(name, dists) for name, dists in sorted(groups.items())]
@@ -61,7 +61,7 @@ def _build_rename_modal(all_districts: list, current_mappings: dict, renames: di
         html.Div([
             # Header
             html.Div([
-                html.H3('Rename / Group Districts'),
+                html.H3('Rename / Group Schools'),
                 html.Button(
                     '✕', id='close-rename-modal-btn',
                     className='modal-close-btn', n_clicks=0,
@@ -69,7 +69,7 @@ def _build_rename_modal(all_districts: list, current_mappings: dict, renames: di
             ], className='modal-header'),
 
             html.P(
-                'Create a custom group name then drag districts from the '
+                'Create a custom group name then drag schools from the '
                 'pool on the left into the group.',
                 className='modal-instructions',
             ),
@@ -93,7 +93,7 @@ def _build_rename_modal(all_districts: list, current_mappings: dict, renames: di
             html.Div([
                 # Left – district pool
                 html.Div([
-                    html.H4('Districts', className='modal-column-header'),
+                    html.H4('Schools', className='modal-column-header'),
                     html.Div(
                         pool_items,
                         id='unassigned-drop-zone',

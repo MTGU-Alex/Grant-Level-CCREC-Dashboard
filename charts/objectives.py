@@ -121,8 +121,14 @@ def get_fafsa(ay: pd.DataFrame):
         .reset_index()
     )
     return px.pie(
-        data, names='FAFSA status code', values='Percent',
+        data, names='FAFSA status code', values='Percent', color='FAFSA status code',
         title='FAFSA Completion (Seniors Only)',
+        color_discrete_map={
+            'N/A': Colors.LIGHT_GREY,
+            'Not Collected': Colors.LIGHT_GREY,
+            'FAFSA Not Completed': Colors.SECONDARY,
+            'FAFSA Completed': Colors.PRIMARY
+        },
     )
 
 @safe_chart('No graduation data available')
@@ -136,8 +142,14 @@ def get_graduation(ay: pd.DataFrame) -> Figure:
         .reset_index()
     )
     return px.pie(
-        data, names='HS Grad Status code', values='Percent',
-        title='High School Graduation Code (Seniors Only)'
+        data, names='HS Grad Status code', values='Percent', color='HS Grad Status code',
+        title='High School Graduation Code (Seniors Only)',
+        color_discrete_map={
+            'Graduated': Colors.PRIMARY,
+            'Did Not Graduate': Colors.SECONDARY, 
+            'Graduation Status Unknown': Colors.TERTIARY, 
+            'N/A': Colors.LIGHT_GREY
+        },
     )
 
 @safe_chart('No graduation data available')
@@ -156,8 +168,12 @@ def get_pse(ay: pd.DataFrame) -> Figure:
         .reset_index()
     )
     return px.pie(
-        data, names='PSE Status', values='Percent',
-        title='Post Seconsary Enrollment (Seniors Only)'
+        data, names='PSE Status', values='Percent', color='PSE Status',
+        title='Post Secondary Enrollment (Seniors Only)',
+        color_discrete_map={
+            'Enrolled': Colors.PRIMARY,
+            'Did Not Enroll': Colors.SECONDARY, 
+        },
     )
 
 @safe_chart('No Algebra 1 data available')
