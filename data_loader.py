@@ -392,7 +392,7 @@ def load_data(input_path: str) -> dict:
 
     choices = [
         'Did not go on college visit, did not enroll in post secondary',
-        'Went on collete visit(s), did not enroll in post secondary',
+        'Went on college visit(s), did not enroll in post secondary',
         'Did not go on college visit, enrolled in post secondary',
         'Went on college visit(s), enrolled in post secondary at a visited school',
         'Went on college visit(s), enrolled in post secondary at a NON visited school',
