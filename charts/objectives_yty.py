@@ -264,11 +264,11 @@ def get_yty_alg_1(
     fig = px.bar(
         counts, x='High School AY', y='Percent', color='Algebra 1 Status',
         barmode='stack', text_auto=True, title='Algebra 1 Status (9th Graders Only)',
-        category_orders={'Algebra 1 Status': ['Enrolled and Completed', 'Enrolled But Not Completed', 'Not enrolled', 'N/A']},
+        category_orders={'Algebra 1 Status': ['Enrolled and Completed', 'Enrolled But Not Completed', 'Not Enrolled or Data Unavailable', 'N/A']},
         color_discrete_map={
             'Enrolled and Completed': Colors.PRIMARY,
             'Enrolled But Not Completed': Colors.SECONDARY,
-            'Not enrolled': Colors.TERTIARY,
+            'Not Enrolled or Data Unavailable': Colors.TERTIARY,
             'N/A': Colors.LIGHT_GREY
         },
     ).update_traces(texttemplate='%{y}%').update_layout(legend_title_text=None)

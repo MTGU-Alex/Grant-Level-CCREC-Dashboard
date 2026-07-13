@@ -129,7 +129,7 @@ CODE_MAPPINGS = {
     'Algebra 1 Status': {
         1: 'Enrolled and Completed',
         2: 'Enrolled But Not Completed',
-        3: 'Not enrolled or Data Unavailable',
+        3: 'Not Enrolled or Data Unavailable',
         4: 'N/A',
     },
 }
