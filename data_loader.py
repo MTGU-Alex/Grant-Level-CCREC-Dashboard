@@ -357,6 +357,7 @@ def load_data(input_path: str) -> dict:
         ay_df[col] = ay_df[col].fillna(0)
     ay_df.rename(columns=SERVICE_COLUMN_RENAME, inplace=True)
     ay_df.rename(columns={'Algebra 1- Grade of Completion': 'Algebra 1 Status'}, inplace=True)
+    ay_df.rename(columns={'Algebra 1 Completion': 'Algebra 1 Status'}, inplace=True)
 
     # Map codes to strings
     ay_df = _map_codes_to_strings(ay_df)

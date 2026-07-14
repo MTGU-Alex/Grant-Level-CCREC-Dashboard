@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 from plotly.graph_objects import Figure
 
 from constants import SERVICE_COLUMNS, Colors
-from charts.common import safe_chart, get_empty_figure
+from charts.common import safe_chart, get_empty_figure, sort_by_grade
 
 
 @safe_chart("No service data available")
@@ -163,7 +163,12 @@ def get_gpa_compare(ay: pd.DataFrame, district_ay: pd.DataFrame, gpa_type: str) 
         barmode='group', text_auto=True,
         title=f'Average GPA by Grade ({gpa_type})',
     ).update_layout(
-        legend_title_text=""
+        legend_title_text="",
+        xaxis=dict(
+            type='category',
+            categoryorder='array',
+            categoryarray=sorted(combined['Grade Level'].unique(), key=lambda x: float(x))
+        )
     )
 
 
