@@ -131,7 +131,7 @@ def get_yty_gpa(
     fig.update_yaxes(title_text='Average GPA', range=[0, 4], secondary_y=False)
 
     # Benchmark line
-    if benchmark_val and increase_val and benchmark_year:
+    if benchmark_val and increase_val is not None and benchmark_year:
         line = get_benchmark_line(years, benchmark_val, increase_val, benchmark_year, '1')
         fig.add_trace(line)
         fig.update_layout(scattermode='group')
@@ -168,7 +168,7 @@ def get_yty_fafsa(
         },
     ).update_traces(texttemplate='%{y}%').update_layout(legend_title_text=None)
 
-    if benchmark_val and increase_val and benchmark_year:
+    if benchmark_val and increase_val is not None and benchmark_year:
         fig.add_trace(get_benchmark_line(years, benchmark_val, increase_val, benchmark_year, None))
 
     return fig
@@ -202,7 +202,7 @@ def get_yty_graduation(
         },
     ).update_traces(texttemplate='%{y}%').update_layout(legend_title_text=None)
 
-    if benchmark_val and increase_val and benchmark_year:
+    if benchmark_val and increase_val is not None and benchmark_year:
         fig.add_trace(get_benchmark_line(years, benchmark_val, increase_val, benchmark_year, None))
 
     return fig
@@ -241,7 +241,7 @@ def get_yty_pse(
         },
     ).update_traces(texttemplate='%{y}%').update_layout(legend_title_text=None)
 
-    if benchmark_val and increase_val and benchmark_year:
+    if benchmark_val and increase_val is not None and benchmark_year:
         fig.add_trace(get_benchmark_line(years, benchmark_val, increase_val, benchmark_year, None))
 
     return fig
@@ -273,7 +273,7 @@ def get_yty_alg_1(
         },
     ).update_traces(texttemplate='%{y}%').update_layout(legend_title_text=None)
 
-    if benchmark_val and increase_val and benchmark_year:
+    if benchmark_val and increase_val is not None and benchmark_year:
         fig.add_trace(get_benchmark_line(years, benchmark_val, increase_val, benchmark_year, None))
 
     return fig
