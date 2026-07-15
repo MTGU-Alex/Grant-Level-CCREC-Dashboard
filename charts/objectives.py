@@ -147,7 +147,7 @@ def get_graduation(ay: pd.DataFrame) -> Figure:
         color_discrete_map={
             'Graduated': Colors.PRIMARY,
             'Did Not Graduate': Colors.SECONDARY, 
-            'Graduation Status Unknown': Colors.TERTIARY, 
+            'Graduation Status Unknown': Colors.LIGHT_GREY, 
             'N/A': Colors.LIGHT_GREY
         },
     )
