@@ -113,7 +113,7 @@ def _render_objectives(
     fafsa_fig = charts.get_fafsa(filtered_ay[filtered_ay['Grade Level'].isin(['12'])])
     graduation_fig = charts.get_graduation(filtered_ay[filtered_ay['Grade Level'].isin(['12'])])
     pse_fig = charts.get_pse(filtered_ay[filtered_ay['Grade Level'].isin(['12'])])
-    alg_1_fig = charts.get_alg_1(filtered_ay)
+    alg_1_fig = charts.get_alg_1(filtered_ay[filtered_ay['Grade Level'] != '13'])
     l1_opts, l1_sel, l2_opts, l2_sel, l3_opts, l3_sel, l4_opts, l4_sel, sankey_fig, msg = (
         charts.get_sankey(filtered_ay, l1, l2, l3, l4, gpa_type, gpa_low, gpa_high)
     )
