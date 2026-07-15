@@ -356,8 +356,6 @@ def load_data(input_path: str) -> dict:
     for col in service_cols:
         ay_df[col] = ay_df[col].fillna(0)
     ay_df.rename(columns=SERVICE_COLUMN_RENAME, inplace=True)
-    ay_df.rename(columns={'Algebra 1- Grade of Completion': 'Algebra 1 Status'}, inplace=True)
-    ay_df.rename(columns={'Algebra 1 Completion': 'Algebra 1 Status'}, inplace=True)
 
     # Map codes to strings
     ay_df = _map_codes_to_strings(ay_df)
@@ -371,6 +369,8 @@ def load_data(input_path: str) -> dict:
     aggregated_services, student_duration_by_month = create_service_aggregation(service_df)
 
     # College visits
+    ay_df['First College Attended IPEDS'] = ay_df['First College Attended IPEDS'].astype(str).str.replace('.0', '')
+
     college_visits = create_college_visits_df(ay_df)
     ay_df = ay_df.merge(college_visits, how='left', on='National CCREC Student ID')
 

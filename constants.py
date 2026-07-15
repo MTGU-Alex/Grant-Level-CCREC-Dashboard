@@ -151,6 +151,8 @@ SERVICE_COLUMN_RENAME = {
     'Service 11 Total': 'Family Counseling/ Advising',
     'Service 12 Total': 'Family College Visit',
     'Service 13 Total': 'Other Family Events',
+    'Algebra 1- Grade of Completion': 'Algebra 1 Status',
+    'Algebra 1 Completion': 'Algebra 1 Status'
 }
 
 # ============================
@@ -194,7 +196,7 @@ AY_COLUMNS_TO_KEEP = [
     'Service 7 Total', 'Service 8 Total', 'Service 9 Total',
     'Service 10 Total', 'Service 11 Total', 'Service 12 Total',
     'Service 13 Total', 'HS Grad Status code', 'FAFSA status code',
-    'Algebra 1- Grade of Completion', 'Final Term GPA', 'Cumulative GPA',
+    'Algebra 1- Grade of Completion', 'Algebra 1 Status', 'Algebra 1 Completion', 'Final Term GPA', 'Cumulative GPA',
     'IPEDS numbers of the Schools Visited', 'First College Attended Name',
     'First College Attended IPEDS', 'Graduated Y/N', 'Degree Title',
     'Dual Enrollment', 'Dual Enrollment Degree', 'School Group Name',
