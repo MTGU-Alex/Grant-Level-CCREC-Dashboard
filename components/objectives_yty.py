@@ -85,7 +85,7 @@ def get_objectives_yty_layout(
                 html.H4('Benchmark:', className='options-text'),
                 dcc.Input(
                     id=f"{cfg['id']}-benchmark-input",
-                    type='number', placeholder=cfg['placeholder'],
+                    type='number', placeholder=0,
                     value=cfg['benchmark'], className='options-input',
                 ),
             ], className='yty-benchmark-div'),
