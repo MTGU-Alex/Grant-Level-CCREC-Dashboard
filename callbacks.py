@@ -140,7 +140,7 @@ def _render_objectives_yty(
         pse_bench, pse_inc, pse_year,
         alg_1_bench, alg_1_inc, alg_1_year,
         years,
-        charts.get_yty_gpa(filtered_ay, years, gpa_radio or 'Cumulative GPA', gpa_bench, gpa_inc, gpa_year),
+        charts.get_yty_gpa(filtered_ay[filtered_ay['Grade Level'].isin(['9', '10', '11', '12'])], years, gpa_radio or 'Cumulative GPA', gpa_bench, gpa_inc, gpa_year),
         charts.get_yty_fafsa(filtered_ay, years, fafsa_bench, fafsa_inc, fafsa_year),
         charts.get_yty_graduation(filtered_ay, years, grad_bench, grad_inc, grad_year),
         charts.get_yty_pse(filtered_ay, years, pse_bench, pse_inc, pse_year),

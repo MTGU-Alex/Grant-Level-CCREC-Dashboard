@@ -126,7 +126,7 @@ def get_yty_gpa(
         secondary_y=False,
     )
 
-    fig.update_layout(barmode='stack', title=f'GPA Missingness and Average by Year ({gpa_type})')
+    fig.update_layout(barmode='stack', title=f'{gpa_type} Missingness and Average by Year (Grades 9-12)')
     fig.update_yaxes(showticklabels=False, showgrid=False, secondary_y=True)
     fig.update_yaxes(title_text='Average GPA', range=[0, 4], secondary_y=False)
 
@@ -215,11 +215,11 @@ def get_yty_pse(
 ) -> Figure:
     """Stacked bar chart of post-secondary enrollment by year with optional benchmark."""
     pse_df = ay[
-        (ay['Grade Level'].isin(['12'])) & (ay['HS Grad Status code'] == 'Graduated')
+        (ay['Grade Level'].isin(['12']))
     ][['High School AY', 'First College Attended Name']].copy()
 
     if len(pse_df) == 0:
-        return get_empty_figure("No graduated seniors in data")
+        return get_empty_figure("No seniors in data")
 
     pse_df['PSE Status'] = np.where(
         (pse_df['First College Attended Name'].isna()) | (pse_df['First College Attended Name'].str.lower() == 'not found'),
@@ -233,7 +233,7 @@ def get_yty_pse(
 
     fig = px.bar(
         counts, x='High School AY', y='Percent', color='PSE Status',
-        barmode='stack', text_auto=True, title='Post-Secondary Enrollment by Year (Graduates Only)',
+        barmode='stack', text_auto=True, title='Post-Secondary Enrollment by Year (Seniors Only)',
         category_orders={'PSE Status': ['Enrolled', 'Did Not Enroll']},
         color_discrete_map={
             'Enrolled': Colors.PRIMARY,
