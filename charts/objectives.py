@@ -220,7 +220,7 @@ def get_sankey(
          l3_options, l3_selection, l4_options, l4_selection, figure)
     """
     # Level 1 setup
-    l1_options = ['GPA', 'School Display Name', 'Grade Level', 'Service Participation Level', 'HS Grad Status code', 'Went on College Visit', 'Post Secondary Enrollment', 'College Visits and PSE', 'Post Secondary Graduation']
+    l1_options = ['GPA', 'School Display Name', 'Grade Level', 'Service Participation Level', 'HS Grad Status code', 'Went on College Visit', 'Post Secondary Enrollment', 'College Visits and PSE']
     if not l1_selection:
         l1_selection = 'Service Participation Level'
 
