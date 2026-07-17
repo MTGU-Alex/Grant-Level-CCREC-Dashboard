@@ -209,7 +209,7 @@ def _map_codes_to_strings(ay_df: pd.DataFrame) -> pd.DataFrame:
     """Map numeric codes to human-readable strings."""
     for col, mapping in CODE_MAPPINGS.items():
         if col in ay_df.columns:
-            ay_df[col] = ay_df[col].map(mapping).fillna('Unknown')
+            ay_df[col] = ay_df[col].map(mapping).fillna(ay_df[col])
     return ay_df
 
 
