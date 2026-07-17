@@ -107,7 +107,7 @@ def _render_objectives(
     gpa_low       = gpa_range[0] if gpa_range else 2.0
     gpa_high      = gpa_range[1] if gpa_range else 3.0
     gpa_benchmark = gpa_benchmark if gpa_benchmark is not None else 2.5
-    l1            = l1 or 'GPA'
+    l1            = l1 or 'Service Participation Level'
 
     gpa_fig = charts.get_gpa_by_grade(filtered_ay, gpa_type, gpa_low, gpa_high, gpa_benchmark)
     fafsa_fig = charts.get_fafsa(filtered_ay[filtered_ay['Grade Level'].isin(['12'])])

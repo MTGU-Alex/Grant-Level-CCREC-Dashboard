@@ -172,9 +172,9 @@ PAGE_CONFIG = {
 # ==========================
 SANKEY_LEVEL_OPTIONS = {
     'GPA': ['School Display Name', 'Grade Level', 'Service Participation Level', 'FAFSA status code', 'Went on College Visit', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
-    'School Display Name': ['GPA', 'Grade Level', 'Service Participation Level', 'FAFSA status code', 'Went on College Visit', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
+    'School Display Name': ['Service Participation Level', 'Grade Level', 'GPA', 'FAFSA status code', 'Went on College Visit', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
     'Grade Level': ['Service Participation Level', 'School Display Name', 'GPA', 'FAFSA status code', 'Went on College Visit', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
-    'Service Participation Level': ['Grade Level', 'School Display Name', 'GPA', 'FAFSA status code', 'Went on College Visit', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
+    'Service Participation Level': ['GPA', 'School Display Name', 'GPA', 'FAFSA status code', 'Went on College Visit', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation'],
     'FAFSA status code': ['Went on College Visit', 'HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation''College Visits and PSE'],
     'Went on College Visit': ['HS Grad Status code', 'Post Secondary Enrollment', 'Post Secondary Graduation', 'College Visits and PSE'],
     'HS Grad Status code': ['Post Secondary Enrollment', 'Post Secondary Graduation', 'College Visits and PSE'],

@@ -92,7 +92,7 @@ def get_gpa_by_grade(
 
     fig.update_layout(
         barmode='stack',
-        title='GPA Ranges and Averages by Grade',
+        title=f'{gpa_type} Ranges and Averages by Grade',
     )
     fig.update_xaxes(
         type='category',
@@ -222,7 +222,7 @@ def get_sankey(
     # Level 1 setup
     l1_options = ['GPA', 'School Display Name', 'Grade Level', 'Service Participation Level', 'HS Grad Status code', 'Went on College Visit', 'Post Secondary Enrollment', 'College Visits and PSE', 'Post Secondary Graduation']
     if not l1_selection:
-        l1_selection = 'GPA'
+        l1_selection = 'Service Participation Level'
 
     # Cascade level options
     options_dict = {
