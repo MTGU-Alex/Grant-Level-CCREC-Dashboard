@@ -157,7 +157,7 @@ def get_pse(ay: pd.DataFrame) -> Figure:
     seniors = ay[ay['Grade Level'].isin(['12'])] 
 
     seniors['PSE Status'] = np.where(
-        (seniors['First College Attended Name'].isna()) | (seniors['First College Attended Name'].str.lower() == 'not found'),
+        (seniors['First College Attended Name'].isna()) | (seniors['First College Attended Name'].astype('str').str.lower() == 'not found'),
         'Did Not Enroll', 'Enrolled'
     )
 
@@ -271,12 +271,12 @@ def get_sankey(
     # Compute derived columns
     ay = ay.copy()
     ay['Post Secondary Enrollment'] = np.where(
-        (ay['First College Attended Name'].isna()) | (ay['First College Attended Name'].str.lower() == 'not found'),
+        (ay['First College Attended Name'].isna()) | (ay['First College Attended Name'].astype('str').str.lower() == 'not found'),
         'Did Not Enroll', 'Enrolled'
     )
 
     ay['Post Secondary Graduation'] = np.where(
-        (ay['Graduated Y/N'].isna()) | (ay['Graduated Y/N'].str.lower() == 'n'),
+        (ay['Graduated Y/N'].isna()) | (ay['Graduated Y/N'].astype('str').str.lower() == 'n'),
         'Has Not Graduated', 'Graduated'
     )
 
