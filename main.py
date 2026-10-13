@@ -16,6 +16,7 @@ from data_service import DashboardData
 from callbacks import register_callbacks
 import components
 
+# Comment for testing
 
 def create_app():
     """Create and configure the Dash application."""
