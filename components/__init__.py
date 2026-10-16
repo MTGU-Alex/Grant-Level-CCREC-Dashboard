@@ -3,6 +3,7 @@ Layout component modules for the CCREC Dashboard.
 """
 
 from components.layout import get_app_layout
+from components.uploads import get_upload_page
 from components.demographics import get_demographics_layout
 from components.services import get_services_layout
 from components.services_yty import get_services_yty_layout

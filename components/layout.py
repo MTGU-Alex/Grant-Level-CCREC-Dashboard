@@ -21,7 +21,7 @@ def get_app_layout(years: list, renames: dict, group_list: list) -> html.Div:
     """
     return html.Div([
         # State stores
-        dcc.Store(id='current-page', data='demographics'),
+        dcc.Store(id='current-page', data='uploads'),
         dcc.Store(id='filter-store', data={}),
         dcc.Store(id='district-mappings-store', storage_type='memory', data=district_names.load_mappings()),
         dcc.Store(id='district-pending-store', storage_type='memory', data=None),
@@ -84,7 +84,7 @@ def get_app_layout(years: list, renames: dict, group_list: list) -> html.Div:
                 html.H4('Filters:', id='filter-title'),
                 html.Div(id='active-filters'),
             ], id='filter-box'),
-        ], id='header-wrapper'),
+        ], id='header-wrapper', style={'display': 'none'}),
 
         # Page content area
         html.Div(id='page-contents'),

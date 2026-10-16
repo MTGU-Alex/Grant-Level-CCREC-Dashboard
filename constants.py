@@ -159,6 +159,7 @@ SERVICE_COLUMN_RENAME = {
 # == PAGE CONFIGURATION ======
 # ============================
 PAGE_CONFIG = {
+    'uploads': {'title': 'Uploads', 'uses_year': False},
     'demographics': {'title': 'Demographics', 'uses_year': True},
     'services': {'title': 'Services', 'uses_year': True},
     'services-yty': {'title': 'Services YTY', 'uses_year': False},

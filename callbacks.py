@@ -51,6 +51,7 @@ def _determine_page(trigger, current_page: str) -> str:
         return current_page
 
     return {
+        'start-btn':   'demographics',
         'demographics-btn':   'demographics',
         'services-btn':       'services',
         'services-yty-btn':   'services-yty',
@@ -61,6 +62,8 @@ def _determine_page(trigger, current_page: str) -> str:
 
 
 # ── Page renderer functions ─────────────────────────────────────────────────────
+def _render_uploads() -> html.Div:
+    return components.get_upload_page()
 
 def _render_demographics(filtered_ay: pd.DataFrame) -> html.Div:
     return components.get_demographics_layout(
@@ -244,6 +247,41 @@ def _render_compare(
 def register_callbacks(app, data: DashboardData):
     """Register all dashboard callbacks."""
 
+    @app.callback(
+        [
+            Output('ay-filename',         'children'),
+            Output('ay-info-box',         'children'),
+            Output('service-filename',    'children'),
+            Output('service-info-box',    'children'),
+            Output('start-btn',           'disabled'),
+        ],
+        [
+            Input('upload-ay',         'contents'),
+            Input('upload-service',    'contents'),
+            Input('upload-ay',         'filename'),
+            Input('upload-service',    'filename'),
+        ],
+    )
+    def handle_uploads(ay_contents, service_contents, ay_filename, service_filename):
+        if ay_contents:
+            ay_message = f'AY file: {ay_filename}'
+            ay_status = f'PLACEHOLDER - AY File good'
+        else:
+            ay_message = 'No AY file uploaded yet'
+            ay_status = ''
+
+        if service_contents:
+            service_message = f'Service file: {service_filename}'
+            service_status = f'PLACEHOLDER - service File good'
+        else:
+            service_message = 'No service file uploaded yet'
+            service_status = ''
+
+        start_button_status = not (bool(ay_contents) and bool(service_contents))
+        return ay_message, ay_status, service_message, service_status, start_button_status
+
+        
+
     # ------------------------------------------------------------------
     # DISTRICT RENAME  ①  –  open / close the modal  (clientside)
     # ------------------------------------------------------------------
@@ -351,6 +389,7 @@ def register_callbacks(app, data: DashboardData):
     # ------------------------------------------------------------------
     @app.callback(
         [
+            Output('header-wrapper',       'style'),
             Output('page-contents',        'children'),
             Output('page-title',           'children'),
             Output('total-service-hours',  'children'),
@@ -366,6 +405,7 @@ def register_callbacks(app, data: DashboardData):
             # Navigation & global
             Input('year-filter',          'value'),
             Input('group-dropdown',       'value'),
+            Input('start-btn',            'n_clicks', allow_optional=True),
             Input('demographics-btn',     'n_clicks'),
             Input('services-btn',         'n_clicks'),
             Input('services-yty-btn',     'n_clicks'),
@@ -425,10 +465,11 @@ def register_callbacks(app, data: DashboardData):
             State('school-renames', 'data')
         ],
         suppress_callback_exceptions=True,
+        prevent_initial_call=True,
     )
     def update_page(
         selected_year, selected_group,
-        _demo_btn, _svc_btn, _svc_yty_btn, _obj_btn, _obj_yty_btn, _cmp_btn,
+        _start_btn, _demo_btn, _svc_btn, _svc_yty_btn, _obj_btn, _obj_yty_btn, _cmp_btn,
         district_mappings,                    
         gender_click, ethnicity_click, grade_click, race_click,
         remove_clicks,
@@ -446,6 +487,7 @@ def register_callbacks(app, data: DashboardData):
         active_filters, current_page, renames
     ):
         trigger = ctx.triggered_id
+        header_visability = {'display': 'flex'}
 
         # ── Filters ──────────────────────────────────────────────────────
         click_data = {
@@ -491,6 +533,10 @@ def register_callbacks(app, data: DashboardData):
 
         # ── Render ───────────────────────────────────────────────────────
         match page:
+            case 'uploads':
+                contents = _render_uploads()
+                header_visability = {'display': 'none'}
+
             case 'demographics':
                 contents = _render_demographics(filtered_ay_raw_page)
 
@@ -538,8 +584,9 @@ def register_callbacks(app, data: DashboardData):
                 )
 
             case _:
-                contents = _render_demographics(filtered_ay_raw_page)
-                page = 'demographics'
+                contents = _render_uploads()
+                page = 'uploads'
+                header_visability = {'display': 'none'}
 
         # ── Header stats ─────────────────────────────────────────────────
         stats      = data.get_header_stats(filters, selected_year, selected_group)
@@ -547,6 +594,7 @@ def register_callbacks(app, data: DashboardData):
         filter_tags = _build_filter_tags(filters)
 
         return (
+            header_visability,
             contents,
             page_title,
             stats['total_hours'],
