@@ -2,10 +2,52 @@
 Data access layer for the CCREC Dashboard.
 Provides filtered data access and computed statistics.
 """
-
+import base64
+import io
 import pandas as pd
 from typing import Optional
 from constants import SERVICE_COLUMNS, UNKNOWN_NCES_ID
+
+def process_ay_upload(filename, contents):
+    file_good = True
+    return_message = ''
+
+    if filename[-3:] != 'csv':
+        file_good = False
+        return_message += 'AY file must be a csv file'
+        return file_good, return_message, None, None
+
+    content_type, contents_string = contents.split(',')
+    decoded = base64.b64decode(contents_string)
+    ay = pd.read_csv(io.StringIO(decoded.decode('utf-8-sig')), low_memory=False)
+
+    ay_overview = ay.groupby('High School AY')[['Secondary School Name', 'National CCREC Student ID']].nunique().reset_index().rename(columns={'Secondary School Name': 'Number of Schools', 'National CCREC Student ID': 'Number of Students'})
+    print(ay_overview)
+
+    return file_good, return_message, ay, ay_overview
+    
+
+def process_service_upload(filename, contents):
+    file_good = True
+    return_message = ''
+
+    if filename[-3:] != 'csv':
+        file_good = False
+        return_message += 'Service file must be a csv file'
+        return file_good, return_message, None, None
+
+    content_type, contents_string = contents.split(',')
+    decoded = base64.b64decode(contents_string)
+    services = pd.read_csv(io.StringIO(decoded.decode('utf-8-sig')), low_memory=False)
+
+    services_overview = services.groupby('Academic Year').agg(
+        total_entries=('National CCREC Student ID', 'count'),
+        total_student=('National CCREC Student ID', 'nunique'),
+    ).reset_index().rename(columns={'total_entries': 'Total Service Entries', 'total_student': 'Students With a Service'})
+    print(services_overview)
+
+    return file_good, return_message, services, services_overview
+
 
 
 class DashboardData:

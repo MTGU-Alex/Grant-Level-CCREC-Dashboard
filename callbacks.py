@@ -10,7 +10,7 @@ import charts
 import components
 import district_names
 from constants import SERVICE_COLUMNS, PAGE_CONFIG
-from data_service import DashboardData
+from data_service import DashboardData, process_ay_upload, process_service_upload
 from datetime import date
 
 
@@ -266,6 +266,7 @@ def register_callbacks(app, data: DashboardData):
         if ay_contents:
             ay_message = f'AY file: {ay_filename}'
             ay_status = f'PLACEHOLDER - AY File good'
+            ay_good, ay_return_message, ay_df, ay_overview = process_ay_upload(ay_filename, ay_contents)
         else:
             ay_message = 'No AY file uploaded yet'
             ay_status = ''
@@ -273,6 +274,7 @@ def register_callbacks(app, data: DashboardData):
         if service_contents:
             service_message = f'Service file: {service_filename}'
             service_status = f'PLACEHOLDER - service File good'
+            service_good, service_return_message, service_df, service_overview = process_service_upload(service_filename, service_contents)
         else:
             service_message = 'No service file uploaded yet'
             service_status = ''
@@ -498,8 +500,23 @@ def register_callbacks(app, data: DashboardData):
         }
         filters = _handle_filter_update(trigger, active_filters or {}, click_data)
 
-        # ── Page ─────────────────────────────────────────────────────────
+        # ── Page with uploads page catch ──────────────────────────────────
         page = _determine_page(trigger, current_page)
+        page_config = PAGE_CONFIG.get(page, {'uses_year': True})
+        if page == 'uploads':
+            return (
+                {'display': 'none'},
+                _render_uploads(),
+                no_update,
+                no_update,
+                no_update,
+                no_update,
+                no_update,
+                no_update,
+                no_update,
+                no_update,
+                no_update,
+            )
 
         # ── Apply district renames ────────────────────────────────────────
         if trigger == 'district-pending-store' and pending_districts_store:
@@ -517,8 +534,7 @@ def register_callbacks(app, data: DashboardData):
         data.group_schools(renames)
         groups = ['All'] + sorted(data._ay_df['School Display Name'].drop_duplicates().to_list(), key=str.lower)
 
-        # ── Raw data ─────────────────────────────────────────────────────
-        page_config = PAGE_CONFIG.get(page, {'uses_year': True})
+        # ── Raw data ────────────────────────────────────────────────────
         filtered_ay_raw = data.get_filtered_ay(filters)
         if selected_group != 'All':
             filtered_ay_raw_group = filtered_ay_raw[filtered_ay_raw['School Display Name'] == selected_group]
