@@ -32,12 +32,7 @@ def create_app():
         sys.exit(1)
 
     # Create data service
-    data = DashboardData(
-        ay_df=data_dict['ay_df'],
-        agg_services_df=data_dict['agg_services_df'],
-        duration_by_student_month_type=data_dict['duration_by_student_month_type'],
-        college_visits=data_dict['college_visits'],
-    )
+    data = DashboardData()
 
     # Initialize Dash
     app = Dash(__name__, suppress_callback_exceptions=True)
@@ -45,7 +40,7 @@ def create_app():
 
     # Set layout
     group_list = ['All'] + sorted(data_dict['ay_df']['School Display Name'].drop_duplicates().to_list())
-    app.layout = components.get_app_layout(data.years, data_dict['renames'], group_list)
+    app.layout = components.get_app_layout(['Place holder'], data_dict['renames'], group_list)
 
     # Register callbacks
     register_callbacks(app, data)

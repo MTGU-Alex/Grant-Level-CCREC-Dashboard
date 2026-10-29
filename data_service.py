@@ -189,18 +189,6 @@ class DashboardData:
         College visit IPEDS data per student.
     """
 
-    def __init__(
-        self,
-        ay_df: pd.DataFrame,
-        agg_services_df: pd.DataFrame,
-        duration_by_student_month_type: pd.DataFrame,
-        college_visits: pd.DataFrame,
-    ):
-        self._ay_df = ay_df
-        self._agg_services_df = agg_services_df
-        self._duration_by_student_month_type = duration_by_student_month_type
-        self._college_visits = college_visits
-
     @property
     def years(self) -> list:
         """Get sorted list of all academic years in the data."""
@@ -239,6 +227,10 @@ class DashboardData:
             self._duration_by_student_month_type = student_duration_by_month
 
         return file_good, return_message, None
+
+    def get_years(self):
+        years = self._ay_df['High School AY'].drop_duplicates().to_list()
+        return sorted(years)
 
     def get_filtered_ay(
         self, filters: dict, year: Optional[str] = None

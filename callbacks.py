@@ -401,6 +401,7 @@ def register_callbacks(app, data: DashboardData):
             Output('active-filters',       'children'),
             Output('filter-store',         'data'),
             Output('school-renames',       'data'),
+            Output('year-filter',          'options'),
             Output('group-dropdown',       'options'),
         ],
         [
@@ -516,6 +517,7 @@ def register_callbacks(app, data: DashboardData):
                 no_update,
                 no_update,
                 no_update,
+                no_update,
             )
 
         # ── Apply district renames ────────────────────────────────────────
@@ -608,6 +610,7 @@ def register_callbacks(app, data: DashboardData):
         stats      = data.get_header_stats(filters, selected_year, selected_group)
         page_title = f"CCREC Dashboard: {PAGE_CONFIG.get(page, {}).get('title', page)}"
         filter_tags = _build_filter_tags(filters)
+        years = [{'label': y, 'value': y} for y in data.get_years()]
 
         return (
             header_visability,
@@ -620,6 +623,7 @@ def register_callbacks(app, data: DashboardData):
             filter_tags,
             filters,
             renames,
+            years,
             groups
         )
 
