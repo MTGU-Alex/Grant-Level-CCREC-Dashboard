@@ -230,7 +230,7 @@ class DashboardData:
 
     def get_years(self):
         years = self._ay_df['High School AY'].drop_duplicates().to_list()
-        return sorted(years)
+        return sorted(years)[::-1]
 
     def get_filtered_ay(
         self, filters: dict, year: Optional[str] = None

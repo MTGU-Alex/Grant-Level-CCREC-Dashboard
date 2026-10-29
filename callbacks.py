@@ -392,6 +392,7 @@ def register_callbacks(app, data: DashboardData):
     @app.callback(
         [
             Output('header-wrapper',       'style'),
+            Output('header-dropdowns',     'children'),
             Output('page-contents',        'children'),
             Output('page-title',           'children'),
             Output('total-service-hours',  'children'),
@@ -401,13 +402,11 @@ def register_callbacks(app, data: DashboardData):
             Output('active-filters',       'children'),
             Output('filter-store',         'data'),
             Output('school-renames',       'data'),
-            Output('year-filter',          'options'),
-            Output('group-dropdown',       'options'),
         ],
         [
             # Navigation & global
-            Input('year-filter',          'value'),
-            Input('group-dropdown',       'value'),
+            Input('year-filter',          'value', allow_optional=True),
+            Input('group-dropdown',       'value', allow_optional=True),
             Input('start-btn',            'n_clicks', allow_optional=True),
             Input('demographics-btn',     'n_clicks'),
             Input('services-btn',         'n_clicks'),
@@ -507,9 +506,8 @@ def register_callbacks(app, data: DashboardData):
         if page == 'uploads':
             return (
                 {'display': 'none'},
+                no_update,
                 _render_uploads(),
-                no_update,
-                no_update,
                 no_update,
                 no_update,
                 no_update,
@@ -536,15 +534,40 @@ def register_callbacks(app, data: DashboardData):
         data.group_schools(renames)
         groups = ['All'] + sorted(data._ay_df['School Display Name'].drop_duplicates().to_list(), key=str.lower)
 
+        # ── Setting up Drop downs ────────────────────────────────────────
+        year_options = data.get_years()
+        year_value = year_options[0] if not selected_year else selected_year
+        group_value = groups[0] if not selected_group else selected_group
+        dropdown_div = html.Div([
+            html.Div([
+                html.P('School Year:'),
+                dcc.Dropdown(
+                    id='year-filter',
+                    options=year_options,
+                    value=year_value,
+                    clearable=False,
+                )
+            ], className='dropdown-and-lable'),
+            html.Div([
+                html.P('School/Group:'),
+                dcc.Dropdown(
+                    id='group-dropdown',
+                    options=groups,
+                    value=group_value,
+                    clearable=False
+                ),
+            ], className='dropdown-and-lable')
+        ], id='header-dropdowns')
+
         # ── Raw data ────────────────────────────────────────────────────
         filtered_ay_raw = data.get_filtered_ay(filters)
-        if selected_group != 'All':
-            filtered_ay_raw_group = filtered_ay_raw[filtered_ay_raw['School Display Name'] == selected_group]
+        if group_value != 'All':
+            filtered_ay_raw_group = filtered_ay_raw[filtered_ay_raw['School Display Name'] == group_value]
         else:
             filtered_ay_raw_group = filtered_ay_raw.copy()
         if page_config['uses_year']:
             filtered_ay_raw_page = filtered_ay_raw_group[
-                filtered_ay_raw_group['High School AY'] == selected_year
+                filtered_ay_raw_group['High School AY'] == year_value
             ]
         else:
             filtered_ay_raw_page = filtered_ay_raw_group.copy()
@@ -607,13 +630,14 @@ def register_callbacks(app, data: DashboardData):
                 header_visability = {'display': 'none'}
 
         # ── Header stats ─────────────────────────────────────────────────
-        stats      = data.get_header_stats(filters, selected_year, selected_group)
+        stats      = data.get_header_stats(filters, year_value, group_value)
         page_title = f"CCREC Dashboard: {PAGE_CONFIG.get(page, {}).get('title', page)}"
         filter_tags = _build_filter_tags(filters)
         years = [{'label': y, 'value': y} for y in data.get_years()]
 
         return (
             header_visability,
+            dropdown_div,
             contents,
             page_title,
             stats['total_hours'],
@@ -623,7 +647,5 @@ def register_callbacks(app, data: DashboardData):
             filter_tags,
             filters,
             renames,
-            years,
-            groups
         )
 

@@ -21,6 +21,8 @@ import components
 
 def create_app():
     """Create and configure the Dash application."""
+
+    '''
     # Load data
     if len(sys.argv) > 1:
         data_dict = data_loader.load_data(sys.argv[1])
@@ -30,6 +32,7 @@ def create_app():
     if isinstance(data_dict, str):
         print(data_dict)
         sys.exit(1)
+    '''
 
     # Create data service
     data = DashboardData()
@@ -39,8 +42,8 @@ def create_app():
     app.title = 'CCREC Dashboard'
 
     # Set layout
-    group_list = ['All'] + sorted(data_dict['ay_df']['School Display Name'].drop_duplicates().to_list())
-    app.layout = components.get_app_layout(['Place holder'], data_dict['renames'], group_list)
+    #group_list = ['All'] + sorted(data_dict['ay_df']['School Display Name'].drop_duplicates().to_list())
+    app.layout = components.get_app_layout()
 
     # Register callbacks
     register_callbacks(app, data)

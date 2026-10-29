@@ -6,7 +6,7 @@ from dash import dcc, html
 import district_names
 
 
-def get_app_layout(years: list, renames: dict, group_list: list) -> html.Div:
+def get_app_layout() -> html.Div:
     """
     Build the top-level application layout.
 
@@ -25,33 +25,14 @@ def get_app_layout(years: list, renames: dict, group_list: list) -> html.Div:
         dcc.Store(id='filter-store', data={}),
         dcc.Store(id='district-mappings-store', storage_type='memory', data=district_names.load_mappings()),
         dcc.Store(id='district-pending-store', storage_type='memory', data=None),
-        dcc.Store(id='school-renames', storage_type='memory', data=renames),
+        dcc.Store(id='school-renames', storage_type='memory', data={}),
 
         # Header
         html.Div([
             html.Div([
                 html.Div([
                     html.Div([
-                        html.Div([
-                            html.Div([
-                                html.P('School Year:'),
-                                dcc.Dropdown(
-                                    id='year-filter',
-                                    options=[{'label': y, 'value': y} for y in sorted(years)],
-                                    value=sorted(years)[-1],
-                                    clearable=False,
-                                )
-                            ], className='dropdown-and-lable'),
-                            html.Div([
-                                html.P('School/Group:'),
-                                dcc.Dropdown(
-                                    id='group-dropdown',
-                                    options=[{'label': y, 'value': y} for y in group_list],
-                                    value=group_list[0],
-                                    clearable=False
-                                ),
-                            ], className='dropdown-and-lable')
-                        ], id='header-dropdowns'),
+                        html.Div(id='header-dropdowns'),
                         html.H1(id='page-title'),
                     ], id='header-row-1'),
                     html.Div([
