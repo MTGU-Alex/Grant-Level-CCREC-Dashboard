@@ -10,7 +10,7 @@ import charts
 import components
 import district_names
 from constants import SERVICE_COLUMNS, PAGE_CONFIG
-from data_service import DashboardData, process_ay_upload, process_service_upload
+from data_service import DashboardData
 from datetime import date
 
 
@@ -266,7 +266,7 @@ def register_callbacks(app, data: DashboardData):
         if ay_contents:
             ay_message = f'AY file: {ay_filename}'
             ay_status = f'PLACEHOLDER - AY File good'
-            ay_good, ay_return_message, ay_df, ay_overview = process_ay_upload(ay_filename, ay_contents)
+            ay_good, ay_return_message, ay_overview = data.load_upload(ay_filename, ay_contents, 'AY')
         else:
             ay_message = 'No AY file uploaded yet'
             ay_status = ''
@@ -274,7 +274,7 @@ def register_callbacks(app, data: DashboardData):
         if service_contents:
             service_message = f'Service file: {service_filename}'
             service_status = f'PLACEHOLDER - service File good'
-            service_good, service_return_message, service_df, service_overview = process_service_upload(service_filename, service_contents)
+            service_good, service_return_message, service_overview = data.load_upload(service_filename, service_contents, 'Services')
         else:
             service_message = 'No service file uploaded yet'
             service_status = ''

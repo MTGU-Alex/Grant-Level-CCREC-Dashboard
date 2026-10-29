@@ -1,5 +1,5 @@
 """
-Central constants, configuration, and mappings for the CCREC Dashboard.
+Central constants, configuration, and mappings for application.
 """
 
 # =========================
@@ -207,6 +207,65 @@ AY_COLUMNS_TO_KEEP = [
     'First College Attended IPEDS', 'Graduated Y/N', 'Degree Title',
     'Dual Enrollment', 'Dual Enrollment Degree', 'School Group Name',
 ]
+
+# ================================
+# == Data Frame Checks Dict ======
+# ================================
+AY_CHECKS = {
+    'High School AY': None,
+    'Program Model Code': None,
+    'School NCES ID': None,
+    'Secondary School Name': None,
+    'National CCREC Student ID': None,
+    'Student Type code': None,
+    'Gender Code': None,
+    'Ethnicity Code': None,
+    'Race Code': None,
+    'Grade Level': None,
+    'Enrollment Status Code': None,
+    'Service 1 Total': None,
+    'Service 2 Total': None,
+    'Service 3 Total': None,
+    'Service 4 Total': None,
+    'Service 5 Total': None,
+    'Service 6 Total': None,
+    'Service 7 Total': None,
+    'Service 8 Total': None,
+    'Service 9 Total': None,
+    'Service 10 Total': None,
+    'Service 11 Total': None,
+    'Service 12 Total': None,
+    'Service 13 Total': None,
+    'Tutoring/Homework Assistance': None,
+    'Mentoring': None,
+    'Financial Aid Counseling/Advising': None,
+    'Counseling/Advising': None,
+    'College Visit': None,
+    'Job Site Visit/Job Shadowing': None,
+    'Summer Programs': None,
+    'Educational Field Trips': None,
+    'Student Workshops': None,
+    'Parent/Family Workshops': None,
+    'Family Counseling/ Advising': None,
+    'Family College Visit': None,
+    'Other Family Events': None,
+    'HS Grad Status code': None,
+    'FAFSA status code': None,
+    'Algebra 1 Status': None,
+    'Algebra 1- Grade of Completion': None,
+    'Algebra 1 Completion': None,
+    'Final Term GPA': None,
+    'Cumulative GPA': None,
+    'IPEDS numbers of the Schools Visited': None,
+    'First College Attended Name': None,
+    'First College Attended IPEDS': None,
+    'Graduated Y/N': None,
+    'Degree Title': None,
+    'Dual Enrollment': None,
+    'Dual Enrollment Degree': None,
+    'School Group Name': None,
+}
+
 
 # Unknown NCES ID placeholder
 UNKNOWN_NCES_ID = '000099999999'
