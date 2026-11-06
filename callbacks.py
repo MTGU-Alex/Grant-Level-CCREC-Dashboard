@@ -13,9 +13,19 @@ from constants import SERVICE_COLUMNS, PAGE_CONFIG
 from data_service import DashboardData
 from datetime import date
 
+# ── Upload Page Helpers ────────────────────────────────────────────────────────
+def _status(ok, message, detail=None):
+    """Green/red status banner with optional small detail text underneath."""
+    return html.Div([
+        html.Div([
+            html.Span('✅' if ok else '❌'),
+            html.Span(message),
+        ], className=f"status {'status--success' if ok else 'status--error'}"),
+        html.Div(detail, className='status-detail') if detail else None,
+    ])
+
 
 # ── Filter helpers ─────────────────────────────────────────────────────────────
-
 def _build_filter_tags(filters: dict) -> list:
     """Create removable filter tag components."""
     return [
@@ -247,42 +257,48 @@ def _render_compare(
 def register_callbacks(app, data: DashboardData):
     """Register all dashboard callbacks."""
 
+    def process_upload(contents, filename, label):
+        """Shared logic for both upload cards. Returns (filename_text, status, is_valid)."""
+        if not contents:
+            return 'No file uploaded yet', '', False
+
+        try:
+            good, return_message, overview = data.load_upload(filename, contents, label)
+        except Exception as e:
+            return filename, _status(False, f'Could not read file: {e}'), False
+
+        # Show overview as small detail text if it's a string.
+        # If it's a DataFrame or other object, swap in a table/etc. here.
+        detail = overview if isinstance(overview, str) else None
+        return filename, _status(bool(good), return_message, detail), bool(good)
+
     @app.callback(
-        [
-            Output('ay-filename',         'children'),
-            Output('ay-info-box',         'children'),
-            Output('service-filename',    'children'),
-            Output('service-info-box',    'children'),
-            Output('start-btn',           'disabled'),
-        ],
-        [
-            Input('upload-ay',         'contents'),
-            Input('upload-service',    'contents'),
-            Input('upload-ay',         'filename'),
-            Input('upload-service',    'filename'),
-        ],
+        Output('ay-filename', 'children'),
+        Output('ay-info-box', 'children'),
+        Output('ay-valid', 'data'),
+        Input('upload-ay', 'contents'),
+        State('upload-ay', 'filename'),
     )
-    def handle_uploads(ay_contents, service_contents, ay_filename, service_filename):
-        if ay_contents:
-            ay_message = f'AY file: {ay_filename}'
-            ay_status = f'PLACEHOLDER - AY File good'
-            ay_good, ay_return_message, ay_overview = data.load_upload(ay_filename, ay_contents, 'AY')
-        else:
-            ay_message = 'No AY file uploaded yet'
-            ay_status = ''
+    def handle_ay_upload(contents, filename):
+        return process_upload(contents, filename, 'AY')
 
-        if service_contents:
-            service_message = f'Service file: {service_filename}'
-            service_status = f'PLACEHOLDER - service File good'
-            service_good, service_return_message, service_overview = data.load_upload(service_filename, service_contents, 'Services')
-        else:
-            service_message = 'No service file uploaded yet'
-            service_status = ''
+    @app.callback(
+        Output('service-filename', 'children'),
+        Output('service-info-box', 'children'),
+        Output('service-valid', 'data'),
+        Input('upload-service', 'contents'),
+        State('upload-service', 'filename'),
+    )
+    def handle_service_upload(contents, filename):
+        return process_upload(contents, filename, 'Services')
 
-        start_button_status = not (bool(ay_contents) and bool(service_contents))
-        return ay_message, ay_status, service_message, service_status, start_button_status
-
-        
+    @app.callback(
+        Output('start-btn', 'disabled'),
+        Input('ay-valid', 'data'),
+        Input('service-valid', 'data'),
+    )
+    def toggle_start_button(ay_valid, service_valid):
+        return not (bool(ay_valid) and bool(service_valid))
 
     # ------------------------------------------------------------------
     # DISTRICT RENAME  ①  –  open / close the modal  (clientside)
