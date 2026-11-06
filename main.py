@@ -45,6 +45,7 @@ if __name__ == "__main__":
     port = get_free_port()
     threading.Thread(target=create_app, args=(port,), daemon=True).start()
     wait_for_server(port)
+    webview.settings['ALLOW_DOWNLOADS'] = True
     webview.create_window(
         "Grant Level Dashboard",
         f"http://127.0.0.1:{port}",
